@@ -20,8 +20,7 @@
     },
     "functions": [],
     "variables": {
-        "location": "[resourceGroup().location]",
-        "tags": "[resourceGroup().tags]"
+        "location": "[resourceGroup().location]"
     },
     "resources": [
         {
@@ -29,7 +28,6 @@
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2019-11-01",
             "location": "[variables('location')]",
-            "tags": "[variables('tags')]",
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
