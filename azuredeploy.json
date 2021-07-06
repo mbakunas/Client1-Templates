@@ -8,6 +8,12 @@
                 "description": "Name of the resource group containing the network resources."
             }
         },
+        "netwrokResourceGroupTags": {
+            "type": "object",
+            "metadata": {
+                "description": "Key-value pairs of Resource group tags."
+            }
+        },
         "vnetName": {
             "type": "string",
             "metadata": {
@@ -64,7 +70,8 @@
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2020-10-01",
             "name": "[parameters('networkResourceGroupName')]",
-            "location": "[variables('constants').resourceGroupLocation]"
+            "location": "[variables('constants').resourceGroupLocation]",
+            "tags": "[parameters('netwrokResourceGroupTags')]"
         },
         {
             "comments": "VNet",
@@ -92,10 +99,5 @@
             }
         }
     ],
-    "outputs": {
-        "deploymentLocation": {
-            "type": "string",
-            "value": "[variables('constants').location]"
-        }
-    }
+    "outputs": {}
 }

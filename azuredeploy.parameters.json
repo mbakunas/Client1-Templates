@@ -5,6 +5,11 @@
         "networkResourceGroupName": {
             "value": "FLUOR-SEA-PROD-RG01"
         },
+        "netwrokResourceGroupTags": {
+            "value": {
+                "Creator" : "Arthur Pals"
+            }
+        },
         "vnetName": {
             "value": "fluor-sea-prod-vnet"
         },
