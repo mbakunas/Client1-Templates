@@ -27,7 +27,7 @@
             {
                 "name": "subnetNsgJson",
                 "count": "[length(parameters('subnet_Names'))]",
-                "input": "[if(equals(parameters('subnet_NSG_Names')[copyIndex('subnetNsgJson')], 'NONE'), 'NONE', json(concat('{\"id\": \"', parameters('subnet_NSG_Names')[copyIndex('subnetNsgJson')], '\"}')))]"
+                "input": "[if(equals(parameters('subnet_NSG_Names')[copyIndex('subnetNsgJson')], 'NONE'), 'NONE', json(concat('{\"id\": \"', resourceId('Microsoft.Network/networkSecurityGroups', parameters('subnet_NSG_Names')[copyIndex('subnetNsgJson')]), '\"}')))]"
             }
         ]
     },
