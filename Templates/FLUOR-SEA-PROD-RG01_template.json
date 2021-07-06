@@ -1,0 +1,247 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "subscriptionId": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "virtualNetworks_fluor-sea-prod-vnet": {
+      "type": "object"
+    },
+    "networkInterfaces_nicSFACPDBA002": {
+      "type": "object"
+    },
+    "disks_SFACPDBA002-datadisk0": {
+      "type": "object"
+    },
+    "disks_SFACPDBA002-datadisk1": {
+      "type": "object"
+    },
+    "disks_SFACPDBA002-datadisk2": {
+      "type": "object"
+    },
+    "virtualMachines_SFACPDBA002": {
+      "type": "object"
+    },
+    "virtualMachines_extensions_SFACPDBA002_antimalware": {
+      "type": "object"
+    },
+    "KvSecretAdminUser": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Parameter retrieved from the deployments key vault with secret name 'AdminUser'"
+      }
+    }
+  },
+  "variables": {
+    "rgTags": {}
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-08-01",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[parameters('virtualNetworks_fluor-sea-prod-vnet').name]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('rgTags')]",
+      "dependsOn": [],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": "[array(parameters('virtualNetworks_fluor-sea-prod-vnet').properties.addressSpace.addressPrefixes)]"
+        },
+        "subnets": [
+          {
+            "name": "[parameters('virtualNetworks_fluor-sea-prod-vnet').properties.subnets[0].name]",
+            "properties": {
+              "addressPrefix": "[parameters('virtualNetworks_fluor-sea-prod-vnet').properties.subnets[0].properties.addressPrefix]"
+            }
+          }
+        ],
+        "enableDdosProtection": "[parameters('virtualNetworks_fluor-sea-prod-vnet').properties.enableDdosProtection]"
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[parameters('networkInterfaces_nicSFACPDBA002').name]",
+      "apiVersion": "2018-11-01",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('networkInterfaces_nicSFACPDBA002').tags]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_fluor-sea-prod-vnet').name)]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "[parameters('networkInterfaces_nicSFACPDBA002').properties.ipConfigurations[0].name]",
+            "properties": {
+              "privateIPAllocationMethod": "[parameters('networkInterfaces_nicSFACPDBA002').properties.ipConfigurations[0].properties.privateIPAllocationMethod]",
+              "privateIPAddress": "[parameters('networkInterfaces_nicSFACPDBA002').properties.ipConfigurations[0].properties.privateIPAddress]",
+              "subnet": {
+                "id": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', resourceGroup().name, '/providers/', 'Microsoft.Network/virtualNetworks', '/', parameters('virtualNetworks_fluor-sea-prod-vnet').name, '/subnets/', parameters('virtualNetworks_fluor-sea-prod-vnet').properties.subnets[0].name)]"
+              },
+              "applicationSecurityGroups": "[array(parameters('networkInterfaces_nicSFACPDBA002').properties.ipConfigurations[0].properties.applicationSecurityGroups)]"
+            }
+          }
+        ],
+        "enableAcceleratedNetworking": "[parameters('networkInterfaces_nicSFACPDBA002').properties.enableAcceleratedNetworking]",
+        "enableIPForwarding": "[parameters('networkInterfaces_nicSFACPDBA002').properties.enableIPForwarding]"
+      }
+    },
+    {
+      "apiVersion": "2018-06-01",
+      "type": "Microsoft.Compute/disks",
+      "name": "[parameters('disks_SFACPDBA002-datadisk0').name]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('disks_SFACPDBA002-datadisk0').tags]",
+      "sku": {
+        "name": "[parameters('disks_SFACPDBA002-datadisk0').sku.name]"
+      },
+      "properties": {
+        "creationData": {
+          "createOption": "[parameters('disks_SFACPDBA002-datadisk0').properties.creationData.createOption]"
+        },
+        "diskSizeGB": "[parameters('disks_SFACPDBA002-datadisk0').properties.diskSizeGB]"
+      }
+    },
+    {
+      "apiVersion": "2018-06-01",
+      "type": "Microsoft.Compute/disks",
+      "name": "[parameters('disks_SFACPDBA002-datadisk1').name]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('disks_SFACPDBA002-datadisk1').tags]",
+      "sku": {
+        "name": "[parameters('disks_SFACPDBA002-datadisk1').sku.name]"
+      },
+      "properties": {
+        "creationData": {
+          "createOption": "[parameters('disks_SFACPDBA002-datadisk1').properties.creationData.createOption]"
+        },
+        "diskSizeGB": "[parameters('disks_SFACPDBA002-datadisk1').properties.diskSizeGB]"
+      }
+    },
+    {
+      "apiVersion": "2018-06-01",
+      "type": "Microsoft.Compute/disks",
+      "name": "[parameters('disks_SFACPDBA002-datadisk2').name]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('disks_SFACPDBA002-datadisk2').tags]",
+      "sku": {
+        "name": "[parameters('disks_SFACPDBA002-datadisk2').sku.name]"
+      },
+      "properties": {
+        "creationData": {
+          "createOption": "[parameters('disks_SFACPDBA002-datadisk2').properties.creationData.createOption]"
+        },
+        "diskSizeGB": "[parameters('disks_SFACPDBA002-datadisk2').properties.diskSizeGB]"
+      }
+    },
+    {
+      "name": "[parameters('virtualMachines_SFACPDBA002').name]",
+      "apiVersion": "2018-06-01",
+      "type": "Microsoft.Compute/virtualMachines",
+      "tags": "[parameters('virtualMachines_SFACPDBA002').tags]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_nicSFACPDBA002').name)]",
+        "[resourceId('Microsoft.Compute/disks', parameters('disks_SFACPDBA002-datadisk0').name)]",
+        "[resourceId('Microsoft.Compute/disks', parameters('disks_SFACPDBA002-datadisk1').name)]",
+        "[resourceId('Microsoft.Compute/disks', parameters('disks_SFACPDBA002-datadisk2').name)]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('virtualMachines_SFACPDBA002').properties.hardwareProfile.vmSize]"
+        },
+        "LicenseType": "[parameters('virtualMachines_SFACPDBA002').properties.LicenseType]",
+        "osProfile": {
+          "computerName": "[parameters('virtualMachines_SFACPDBA002').properties.osProfile.computerName]",
+          "adminPassword": "[parameters('KvSecretAdminUser')]",
+          "adminUsername": "[parameters('virtualMachines_SFACPDBA002').properties.osProfile.adminUsername]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('virtualMachines_SFACPDBA002').properties.storageProfile.imageReference.publisher]",
+            "offer": "[parameters('virtualMachines_SFACPDBA002').properties.storageProfile.imageReference.offer]",
+            "sku": "[parameters('virtualMachines_SFACPDBA002').properties.storageProfile.imageReference.sku]",
+            "version": "[parameters('virtualMachines_SFACPDBA002').properties.storageProfile.imageReference.version]"
+          },
+          "osDisk": {
+            "createOption": "[parameters('virtualMachines_SFACPDBA002').properties.storageProfile.osDisk.createOption]",
+            "managedDisk": {
+              "storageAccountType": "[parameters('virtualMachines_SFACPDBA002').properties.storageProfile.osDisk.managedDisk.storageAccountType]"
+            },
+            "caching": "[parameters('virtualMachines_SFACPDBA002').properties.storageProfile.osDisk.caching]"
+          },
+          "dataDisks": [
+            {
+              "caching": "[parameters('virtualMachines_SFACPDBA002').properties.storageProfile.dataDisks[0].caching]",
+              "lun": "[parameters('virtualMachines_SFACPDBA002').properties.storageProfile.dataDisks[0].lun]",
+              "createOption": "[parameters('virtualMachines_SFACPDBA002').properties.storageProfile.dataDisks[0].createOption]",
+              "managedDisk": {
+                "id": "[resourceId('Microsoft.Compute/disks', parameters('disks_SFACPDBA002-datadisk0').name)]"
+              }
+            },
+            {
+              "caching": "[parameters('virtualMachines_SFACPDBA002').properties.storageProfile.dataDisks[1].caching]",
+              "lun": "[parameters('virtualMachines_SFACPDBA002').properties.storageProfile.dataDisks[1].lun]",
+              "createOption": "[parameters('virtualMachines_SFACPDBA002').properties.storageProfile.dataDisks[1].createOption]",
+              "managedDisk": {
+                "id": "[resourceId('Microsoft.Compute/disks', parameters('disks_SFACPDBA002-datadisk1').name)]"
+              }
+            },
+            {
+              "caching": "[parameters('virtualMachines_SFACPDBA002').properties.storageProfile.dataDisks[2].caching]",
+              "lun": "[parameters('virtualMachines_SFACPDBA002').properties.storageProfile.dataDisks[2].lun]",
+              "createOption": "[parameters('virtualMachines_SFACPDBA002').properties.storageProfile.dataDisks[2].createOption]",
+              "managedDisk": {
+                "id": "[resourceId('Microsoft.Compute/disks', parameters('disks_SFACPDBA002-datadisk2').name)]"
+              }
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_nicSFACPDBA002').name)]",
+              "properties": {
+                "primary": "[parameters('virtualMachines_SFACPDBA002').properties.networkProfile.networkInterfaces[0].properties.primary]"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('virtualMachines_SFACPDBA002').name, '/', parameters('virtualMachines_extensions_SFACPDBA002_antimalware').name)]",
+      "apiVersion": "2015-06-15",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_SFACPDBA002').name)]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Azure.Security",
+        "type": "IaaSAntimalware",
+        "typeHandlerVersion": "1.3",
+        "autoUpgradeMinorVersion": "true",
+        "settings": {
+          "AntimalwareEnabled": "[parameters('virtualMachines_extensions_SFACPDBA002_antimalware').properties.settings.AntimalwareEnabled]",
+          "Exclusions": {
+            "Paths": "[parameters('virtualMachines_extensions_SFACPDBA002_antimalware').properties.settings.Exclusions.Paths]",
+            "Extensions": "[parameters('virtualMachines_extensions_SFACPDBA002_antimalware').properties.settings.Exclusions.Extensions]",
+            "Processes": "[parameters('virtualMachines_extensions_SFACPDBA002_antimalware').properties.settings.Exclusions.Processes]"
+          },
+          "RealtimeProtectionEnabled": "[parameters('virtualMachines_extensions_SFACPDBA002_antimalware').properties.settings.RealtimeProtectionEnabled]",
+          "ScheduledScanSettings": {
+            "isEnabled": "[parameters('virtualMachines_extensions_SFACPDBA002_antimalware').properties.settings.ScheduledScanSettings.isEnabled]",
+            "scanType": "[parameters('virtualMachines_extensions_SFACPDBA002_antimalware').properties.settings.ScheduledScanSettings.scanType]",
+            "day": "[parameters('virtualMachines_extensions_SFACPDBA002_antimalware').properties.settings.ScheduledScanSettings.day]",
+            "time": "[parameters('virtualMachines_extensions_SFACPDBA002_antimalware').properties.settings.ScheduledScanSettings.time]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}
