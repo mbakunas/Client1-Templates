@@ -56,7 +56,7 @@
                 "10.144.11.0/24"
             ]
         },
-        "subnet_NSG_Names": {
+        "subnetNsgNames": {
             "value": [
                 "NONE",
                 "NONE",
