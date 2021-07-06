@@ -51,7 +51,7 @@
             ]
         },
         "assetLocationURI": {
-            "value": "foo"
+            "value": "https://raw.githubusercontent.com/mbakunas/Client1-Templates/master/"
         }
     }
 }
