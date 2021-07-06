@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "subscriptionId": {
-      "value": "0c21837e-ef70-4e17-9a3c-61f5cd825c82"
+      "value": "cfe66d2a-acc8-4c3f-bdfe-b02aee21e309"
     },
     "location": {
       "value": "Southeast Asia"
@@ -201,7 +201,7 @@
     "KvSecretAdminUser": {
       "reference": {
         "keyVault": {
-          "id": "/subscriptions/0c21837e-ef70-4e17-9a3c-61f5cd825c82/resourceGroups/CSSNadiaTest/providers/Microsoft.KeyVault/vaults/CSSKeysNadiaTest"
+          "id": "/subscriptions/cfe66d2a-acc8-4c3f-bdfe-b02aee21e309/resourceGroups/FLUOR-SEA-PROD-RG01/providers/Microsoft.KeyVault/vaults/CSSKeysAdmin"
         },
         "secretName": "AdminUser"
       }
