@@ -1,0 +1,71 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualNetwork_name": {
+            "type": "string"
+        },
+        "virtualNetwork_addressSpace": {
+            "type": "string"
+        },
+        "subnet_gateway_addressSpace": {
+            "type": "string"
+        },
+        "subnet_Names": {
+            "type": "array"
+        },
+        "subnet_Addresses": {
+            "type": "array"
+        }
+    },
+    "functions": [],
+    "variables": {
+        "location": "[resourceGroup().location]",
+        "tags": "[resourceGroup().tags]"
+    },
+    "resources": [
+        {
+            "name": "[parameters('virtualNetwork_name')]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2019-11-01",
+            "location": "[variables('location')]",
+            "tags": "[variables('tags')]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('virtualNetwork_addressSpace')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "GatewaySubnet",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnet_gateway_addressSpace')]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2020-11-01",
+            "name": "[concat(parameters('virtualNetwork_name'), '/', parameters('subnet_Names')[copyIndex()])]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetwork_name'))]"
+            ],
+            "properties": {
+                "addressPrefix": "[parameters('subnet_Addresses')[copyIndex()]]",
+                "serviceEndpoints": [],
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Enabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            },
+            "copy": {
+                "name": "subnetCopy",
+                "count": "[length(parameters('subnet_Names'))]",
+                "mode": "Serial"
+            }
+    }
+    ],
+    "outputs": {}
+}

@@ -1,0 +1,52 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualNetwork_name": {
+            "value": "fluor-sea-prod-vnet"
+        },
+        "virtualNetwork_addressSpace": {
+            "value": "10.144.0.0/20"
+        },
+        "subnet_gateway_addressSpace": {
+            "value": "10.144.0.0/24"
+        },
+        "subnet_Names": {
+            "value": [
+                "fluor-sea-prod-pubdmzin-subnet",
+                "fluor-sea-prod-pubdmzout-subnet",
+                "fluor-sea-prod-mgmt-subnet",
+                "fluor-sea-prod-privdmzin-subnet",
+                "fluor-sea-prod-ipsintier-subnet",
+                "fluor-sea-prod-testtier-subnet",
+                "fluor-sea-prod-ipsouttier-subnet",
+                "fluor-sea-prod-supptier-subnet",
+                "fluor-sea-prod-privdmzout-subnet",
+                "fluor-sea-prod-fetier-subnet",
+                "fluor-sea-prod-webtier-subnet",
+                "fluor-sea-prod-bustier-subnet",
+                "fluor-sea-prod-datatier-subnet",
+                "fluor-sea-prod-sfappsa001-subnet"
+            ]
+        },
+        "subnet_Addresses": {
+            "value": [
+                "10.144.4.0/24",
+                "10.144.5.0/24",
+                "10.144.1.0/24",
+                "10.144.2.0/24",
+                "10.144.10.0/25",
+                "10.144.14.0/24",
+                "10.144.10.128/25",
+                "10.144.15.0/24",
+                "10.144.3.0/24",
+                "10.144.6.0/24",
+                "10.144.7.0/24",
+                "10.144.8.0/24",
+                "10.144.9.0/24",
+                "10.144.11.0/24"
+
+            ]
+        }
+    }
+}

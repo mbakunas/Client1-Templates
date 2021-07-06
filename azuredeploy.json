@@ -1,0 +1,96 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "networkResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the resource group containing the network resources."
+            }
+        },
+        "vnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the virutal network."
+            }
+        },
+        "vnetAddressSpace": {
+            "type": "string",
+            "metadata": {
+                "description": "Address space of the virtual network."
+            }
+        },
+        "gatewaySubnetAddressSpace": {
+            "type": "string",
+            "metadata": {
+                "description": "Address space of the virtual network's gateway subnet"
+            }
+        },
+        "subnetNames": {
+            "type": "array",
+            "metadata": {
+                "description": "List of subnet names.  One subnet will be created for each name."
+            }
+        },
+        "subnetAddressSpaces": {
+            "type": "array",
+            "metadata": {
+                "description": "List of subnet address spaces.  The number of address space much match the count of subnet names."
+            }
+        },
+        "assetLocationURI": {
+            "type": "string",
+            "metadata": {
+                "description": "URI that points to the linked ARM templates."
+            }
+        }
+    },
+    "functions": [],
+    "variables": {
+        "constants": {
+            "location": "[deployment().location]",
+            "resourceGroupLocation": "eastus2",
+            "templateLocationURI": "[concat(parameters('assetLocationURI'), 'Templates/')]"
+        },
+        "deploymentName": "[deployment().Name]",
+        "deploymentNames": {
+            //"networkResourceGroup": "[concat(variables('deploymentName'), '-Network-ResourceGroup')]",
+            "vnet": "[concat(variables('deploymentName'), '-Network-VNet')]"
+        }
+    },
+    "resources": [
+        {
+            "comments": "Network Resource Group",
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2020-10-01",
+            "name": "[parameters('networkResourceGroupName')]",
+            "location": "[variables('constants').resourceGroupLocation]"
+            //"tags"
+        },
+        {
+            "comments": "VNet",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').vnet]",
+            "resourceGroup": "[parameters('networkResourceGroupName')]",
+            "dependsOn": [
+                "[parameters('networkResourceGroupName')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('constants').templateLocationURI, 'VNet.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "virtualNetwork_name": {"value": "[parameters('vnetName')]"},
+                    "virtualNetwork_addressSpace": {"value": "[parameters('vnetAddressSpace')]"},
+                    "subnet_gateway_addressSpace": {"value": "[parameters('gatewaySubnetAddressSpace')]"},
+                    "subnet_Names": {"value": "[parameters('subnetNames')]"},
+                    "subnet_Addresses": {"value": "[parameters('subnetAddressSpaces')]"}
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
