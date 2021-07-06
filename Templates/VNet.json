@@ -82,6 +82,7 @@
             "apiVersion": "2020-11-01",
             "name": "[if(equals(parameters('subnet_NSG_Names')[copyIndex()], 'NONE'), concat('NONE', copyIndex()), parameters('subnet_NSG_Names')[copyIndex()])]",
             "location": "[variables('location')]",
+            "tags": "[resourceGroup().tags]",
             "properties": {
                 "securityRules": []
             },
