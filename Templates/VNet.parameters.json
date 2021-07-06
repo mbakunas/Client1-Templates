@@ -47,6 +47,24 @@
                 "10.144.11.0/24"
 
             ]
+        },
+        "subnet_NSG_Names": {
+            "value": [
+                "NONE",
+                "NONE",
+                "NONE",
+                "NONE",
+                "NONE",
+                "fluor-sea-prod-testtier-subnet-nsg",
+                "NONE",
+                "NONE",
+                "NONE",
+                "NONE",
+                "NONE",
+                "NONE",
+                "NONE",
+                "NONE"
+            ]
         }
     }
 }

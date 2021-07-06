@@ -7,7 +7,8 @@
         },
         "netwrokResourceGroupTags": {
             "value": {
-                "Creator" : "Arthur Pals"
+                "Creator" : "Arthur Pals",
+                "SAP Project Code" : "S5FL"
             }
         },
         "vnetName": {
@@ -53,6 +54,24 @@
                 "10.144.8.0/24",
                 "10.144.9.0/24",
                 "10.144.11.0/24"
+            ]
+        },
+        "subnet_NSG_Names": {
+            "value": [
+                "NONE",
+                "NONE",
+                "NONE",
+                "NONE",
+                "NONE",
+                "fluor-sea-prod-testtier-subnet-nsg",
+                "NONE",
+                "NONE",
+                "NONE",
+                "NONE",
+                "NONE",
+                "NONE",
+                "NONE",
+                "NONE"
             ]
         },
         "assetLocationURI": {

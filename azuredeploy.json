@@ -41,7 +41,13 @@
         "subnetAddressSpaces": {
             "type": "array",
             "metadata": {
-                "description": "List of subnet address spaces.  The number of address space much match the count of subnet names."
+                "description": "List of subnet address spaces.  The number of address spaces much match the count of subnet names."
+            }
+        },
+        "subnet_NSG_Names": {
+            "type": "array",
+            "metadata": {
+                "description": "List of subnet NSG names.  Use NONE for no NSG.  The number of NSG names must match the count of subnet names."
             }
         },
         "assetLocationURI": {
@@ -94,7 +100,8 @@
                     "virtualNetwork_addressSpace": {"value": "[parameters('vnetAddressSpace')]"},
                     "subnet_gateway_addressSpace": {"value": "[parameters('gatewaySubnetAddressSpace')]"},
                     "subnet_Names": {"value": "[parameters('subnetNames')]"},
-                    "subnet_Addresses": {"value": "[parameters('subnetAddressSpaces')]"}
+                    "subnet_Addresses": {"value": "[parameters('subnetAddressSpaces')]"},
+                    "subnet_NSG_Names": { "value": "[parameters('subnet_NSG_Names')]"}
                 }
             }
         }
