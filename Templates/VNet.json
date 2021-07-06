@@ -16,6 +16,9 @@
         },
         "subnet_Addresses": {
             "type": "array"
+        },
+        "subnet_NSG_Names": {
+            "type": "array"
         }
     },
     "functions": [],
@@ -28,6 +31,7 @@
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2019-11-01",
             "location": "[variables('location')]",
+            "tags": "[resourceGroup().tags]",
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
@@ -48,7 +52,6 @@
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "apiVersion": "2020-11-01",
             "name": "[concat(parameters('virtualNetwork_name'), '/', parameters('subnet_Names')[copyIndex()])]",
-            "tags": "[resourceGroup().tags]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetwork_name'))]"
             ],
@@ -64,7 +67,21 @@
                 "count": "[length(parameters('subnet_Names'))]",
                 "mode": "Serial"
             }
-    }
+        },
+        {
+            "condition": "[not(equals(parameters('subnet_NSG_Names')[copyIndex()], 'NONE'))]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('subnet_NSG_Names')[copyIndex()]]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetwork_name'), parameters('subnet_Names')[copyIndex()])]"
+            ],
+            "copy": {
+                "name": "nsgCopy",
+                "count": "[length(parameters('subnet_Names'))]",
+                "mode": "Parallel"
+            }
+        }
     ],
     "outputs": {}
 }
