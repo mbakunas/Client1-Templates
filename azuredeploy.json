@@ -92,5 +92,10 @@
             }
         }
     ],
-    "outputs": {}
+    "outputs": {
+        "deploymentLocation": {
+            "type": "string",
+            "value": "[variables('constants').location]"
+        }
+    }
 }
