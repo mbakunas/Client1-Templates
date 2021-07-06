@@ -79,9 +79,7 @@
         },
         "asaResourceGroupTags": {
             "value": {
-                "value": {
-                    "SAP Project Code" : "S5FL"
-                }
+                "SAP Project Code" : "S5FL"
             }
         },
         "assetLocationURI": {
