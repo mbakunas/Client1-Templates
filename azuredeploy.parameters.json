@@ -5,7 +5,7 @@
         "networkResourceGroupName": {
             "value": "FLUOR-SEA-PROD-RG01"
         },
-        "netwrokResourceGroupTags": {
+        "networkResourceGroupTags": {
             "value": {
                 "Creator" : "Arthur Pals",
                 "SAP Project Code" : "S5FL"
@@ -73,6 +73,16 @@
                 "NONE",
                 "NONE"
             ]
+        },
+        "asaResourceGroupName": {
+            "value": "FLUOR-SEA-PROD-ASA-RG01"
+        },
+        "asaResourceGroupTags": {
+            "value": {
+                "value": {
+                    "SAP Project Code" : "S5FL"
+                }
+            }
         },
         "assetLocationURI": {
             "value": "https://raw.githubusercontent.com/mbakunas/Client1-Templates/master/"

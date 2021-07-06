@@ -8,7 +8,7 @@
                 "description": "Name of the resource group containing the network resources."
             }
         },
-        "netwrokResourceGroupTags": {
+        "networkResourceGroupTags": {
             "type": "object",
             "metadata": {
                 "description": "Key-value pairs of Resource group tags."
@@ -50,6 +50,18 @@
                 "description": "List of subnet NSG names.  Use NONE for no NSG.  The number of NSG names must match the count of subnet names."
             }
         },
+        "asaResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the resource group containing the network resources."
+            }
+        },
+        "asaResourceGroupTags": {
+            "type": "object",
+            "metadata": {
+                "description": "Key-value pairs of Resource group tags."
+            }
+        },
         "assetLocationURI": {
             "type": "string",
             "metadata": {
@@ -77,7 +89,7 @@
             "apiVersion": "2020-10-01",
             "name": "[parameters('networkResourceGroupName')]",
             "location": "[variables('constants').resourceGroupLocation]",
-            "tags": "[parameters('netwrokResourceGroupTags')]"
+            "tags": "[parameters('networkResourceGroupTags')]"
         },
         {
             "comments": "VNet",
@@ -85,7 +97,6 @@
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').vnet]",
             "resourceGroup": "[parameters('networkResourceGroupName')]",
-            //"location": "eastus2",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/resourceGroups/', parameters('networkResourceGroupName'))]"
             ],
@@ -104,6 +115,14 @@
                     "subnet_NSG_Names": { "value": "[parameters('subnetNsgNames')]"}
                 }
             }
+        },
+        {
+            "comments": "ASA NVA Resource Group",
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2020-10-01",
+            "name": "[parameters('asaResourceGroupName')]",
+            "location": "[variables('constants').resourceGroupLocation]",
+            "tags": "[parameters('asaResourceGroupTags')]"
         }
     ],
     "outputs": {}
