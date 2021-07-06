@@ -72,7 +72,7 @@
             "condition": "[not(equals(parameters('subnet_NSG_Names')[copyIndex()], 'NONE'))]",
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2020-11-01",
-            "name": "[parameters('subnet_NSG_Names')[copyIndex()]]",
+            "name": "[if(equals(parameters('subnet_NSG_Names')[copyIndex()], 'NONE'), concat('NONE', copyIndex()), parameters('subnet_NSG_Names')[copyIndex()])]",
             "location": "[variables('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetwork_name'), parameters('subnet_Names')[copyIndex()])]"
