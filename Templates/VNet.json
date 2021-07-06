@@ -21,10 +21,17 @@
             "type": "array"
         }
     },
-    "functions": [],
     "variables": {
-        "location": "[resourceGroup().location]"
+        "location": "[resourceGroup().location]",
+        "copy": [
+            {
+                "name": "subnetNsgJson",
+                "count": "[length(parameters('subnet_Names'))]",
+                "input": "[if(equals(parameters('subnet_NSG_Names')[copyIndex('subnetNsgJson')], 'NONE'), 'NONE', json(concat('{\"id\": \"', parameters('subnet_NSG_Names')[copyIndex('subnetNsgJson')], '\"}')))]"
+            }
+        ]
     },
+    "functions": [],
     "resources": [
         {
             "name": "[parameters('virtualNetwork_name')]",
@@ -57,6 +64,7 @@
             ],
             "properties": {
                 "addressPrefix": "[parameters('subnet_Addresses')[copyIndex()]]",
+                "networkSecurityGroup": "[if(not(equals(variables('subnetNsgJson')[copyIndex()], 'NONE')), variables('subnetNsgJson')[copyIndex()], json('null'))]",
                 "serviceEndpoints": [],
                 "delegations": [],
                 "privateEndpointNetworkPolicies": "Enabled",
@@ -74,9 +82,6 @@
             "apiVersion": "2020-11-01",
             "name": "[if(equals(parameters('subnet_NSG_Names')[copyIndex()], 'NONE'), concat('NONE', copyIndex()), parameters('subnet_NSG_Names')[copyIndex()])]",
             "location": "[variables('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetwork_name'), parameters('subnet_Names')[copyIndex()])]"
-            ],
             "properties": {
                 "securityRules": []
             },
