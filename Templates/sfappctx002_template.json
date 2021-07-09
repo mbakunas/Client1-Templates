@@ -1,0 +1,136 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "subscriptionId": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "networkInterfaces_nicSFAPPCTX002": {
+      "type": "object"
+    },
+    "virtualMachines_SFAPPCTX002": {
+      "type": "object"
+    },
+    "virtualMachines_extensions_SFAPPCTX002_antimalware": {
+      "type": "object"
+    },
+    "KvSecretAdminUser": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Parameter retrieved from the deployments key vault with secret name 'AdminUser'"
+      }
+    }
+  },
+  "variables": {
+    "rgTags": {}
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[parameters('networkInterfaces_nicSFAPPCTX002').name]",
+      "apiVersion": "2018-11-01",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('networkInterfaces_nicSFAPPCTX002').tags]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_fluor-sea-prod-vnet').name)]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "[parameters('networkInterfaces_nicSFAPPCTX002').properties.ipConfigurations[0].name]",
+            "properties": {
+              "privateIPAllocationMethod": "[parameters('networkInterfaces_nicSFAPPCTX002').properties.ipConfigurations[0].properties.privateIPAllocationMethod]",
+              "subnet": {
+                "id": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', resourceGroup().name, '/providers/', 'Microsoft.Network/virtualNetworks', '/', parameters('virtualNetworks_fluor-sea-prod-vnet').name, '/subnets/', parameters('virtualNetworks_fluor-sea-prod-vnet').properties.subnets[0].name)]"
+              },
+              "applicationSecurityGroups": "[array(parameters('networkInterfaces_nicSFAPPCTX002').properties.ipConfigurations[0].properties.applicationSecurityGroups)]"
+            }
+          }
+        ],
+        "enableAcceleratedNetworking": "[parameters('networkInterfaces_nicSFAPPCTX002').properties.enableAcceleratedNetworking]",
+        "enableIPForwarding": "[parameters('networkInterfaces_nicSFAPPCTX002').properties.enableIPForwarding]"
+      }
+    },
+    {
+      "name": "[parameters('virtualMachines_SFAPPCTX002').name]",
+      "apiVersion": "2018-06-01",
+      "type": "Microsoft.Compute/virtualMachines",
+      "tags": "[parameters('virtualMachines_SFAPPCTX002').tags]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_nicSFAPPCTX002').name)]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('virtualMachines_SFAPPCTX002').properties.hardwareProfile.vmSize]"
+        },
+        "LicenseType": "[parameters('virtualMachines_SFAPPCTX002').properties.LicenseType]",
+        "osProfile": {
+          "computerName": "[parameters('virtualMachines_SFAPPCTX002').properties.osProfile.computerName]",
+          "adminPassword": "[parameters('KvSecretAdminUser')]",
+          "adminUsername": "[parameters('virtualMachines_SFAPPCTX002').properties.osProfile.adminUsername]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('virtualMachines_SFAPPCTX002').properties.storageProfile.imageReference.publisher]",
+            "offer": "[parameters('virtualMachines_SFAPPCTX002').properties.storageProfile.imageReference.offer]",
+            "sku": "[parameters('virtualMachines_SFAPPCTX002').properties.storageProfile.imageReference.sku]",
+            "version": "[parameters('virtualMachines_SFAPPCTX002').properties.storageProfile.imageReference.version]"
+          },
+          "osDisk": {
+            "createOption": "[parameters('virtualMachines_SFAPPCTX002').properties.storageProfile.osDisk.createOption]",
+            "managedDisk": {
+              "storageAccountType": "[parameters('virtualMachines_SFAPPCTX002').properties.storageProfile.osDisk.managedDisk.storageAccountType]"
+            },
+            "caching": "[parameters('virtualMachines_SFAPPCTX002').properties.storageProfile.osDisk.caching]"
+          },
+          "dataDisks": "[array(parameters('virtualMachines_SFAPPCTX002').properties.storageProfile.dataDisks)]"
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_nicSFAPPCTX002').name)]",
+              "properties": {
+                "primary": "[parameters('virtualMachines_SFAPPCTX002').properties.networkProfile.networkInterfaces[0].properties.primary]"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('virtualMachines_SFAPPCTX002').name, '/', parameters('virtualMachines_extensions_SFAPPCTX002_antimalware').name)]",
+      "apiVersion": "2015-06-15",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_SFAPPCTX002').name)]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Azure.Security",
+        "type": "IaaSAntimalware",
+        "typeHandlerVersion": "1.3",
+        "autoUpgradeMinorVersion": "true",
+        "settings": {
+          "AntimalwareEnabled": "[parameters('virtualMachines_extensions_SFAPPCTX002_antimalware').properties.settings.AntimalwareEnabled]",
+          "Exclusions": {
+            "Paths": "[parameters('virtualMachines_extensions_SFAPPCTX002_antimalware').properties.settings.Exclusions.Paths]",
+            "Extensions": "[parameters('virtualMachines_extensions_SFAPPCTX002_antimalware').properties.settings.Exclusions.Extensions]",
+            "Processes": "[parameters('virtualMachines_extensions_SFAPPCTX002_antimalware').properties.settings.Exclusions.Processes]"
+          },
+          "RealtimeProtectionEnabled": "[parameters('virtualMachines_extensions_SFAPPCTX002_antimalware').properties.settings.RealtimeProtectionEnabled]",
+          "ScheduledScanSettings": {
+            "isEnabled": "[parameters('virtualMachines_extensions_SFAPPCTX002_antimalware').properties.settings.ScheduledScanSettings.isEnabled]",
+            "scanType": "[parameters('virtualMachines_extensions_SFAPPCTX002_antimalware').properties.settings.ScheduledScanSettings.scanType]",
+            "day": "[parameters('virtualMachines_extensions_SFAPPCTX002_antimalware').properties.settings.ScheduledScanSettings.day]",
+            "time": "[parameters('virtualMachines_extensions_SFAPPCTX002_antimalware').properties.settings.ScheduledScanSettings.time]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}
