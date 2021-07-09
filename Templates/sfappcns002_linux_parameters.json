@@ -1,0 +1,87 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "subscriptionId": {
+      "value": "0c21837e-ef70-4e17-9a3c-61f5cd825c82"
+    },
+    "location": {
+      "value": "Southeast Asia"
+    },
+    "networkInterfaces_nicSFAPPCNS002": {
+      "value": {
+        "name": "nicSFAPPCNS002",
+        "tags": {
+          "Application": "Citrix-NetScaler",
+          "OS": "BDS",
+          "Sap Project Code": "SSFL"
+        },
+        "properties": {
+          "ipConfigurations": [
+            {
+              "name": "ipconfig1",
+              "properties": {
+                "privateIPAllocationMethod": "Dynamic",
+                "applicationSecurityGroups": []
+              }
+            }
+          ],
+          "enableAcceleratedNetworking": false,
+          "enableIPForwarding": false
+        }
+      }
+    },
+    "virtualMachines_SFAPPCNS002": {
+      "value": {
+        "name": "SFAPPCNS002",
+        "tags": {
+          "Application": "Citrix-NetScaler",
+          "OS": "BDS",
+          "Sap Project Code": "SSFL"
+        },
+        "properties": {
+          "hardwareProfile": {
+            "vmSize": "Standard_B2s"
+          },
+          "osProfile": {
+            "computerName": "SFAPPCNS002",
+            "adminUsername": "AdminUsr"
+          },
+          "storageProfile": {
+            "imageReference": {
+              "publisher": "linuxbasedsystemsdesignltd1580878904727",
+              "offer": "idmslinux",
+              "sku": "idmslinux_basic",
+              "version": "latest"
+            },
+            "osDisk": {
+              "createOption": "FromImage",
+              "managedDisk": {
+                "storageAccountType": "Standard_LRS"
+              },
+              "caching": "ReadWrite"
+            },
+            "dataDisks": []
+          },
+          "networkProfile": {
+            "networkInterfaces": [
+              {
+                "properties": {
+                  "primary": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "KvSecretAdminUsr": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/0c21837e-ef70-4e17-9a3c-61f5cd825c82/resourceGroups/CSSNadiaTest/providers/Microsoft.KeyVault/vaults/CSSKeysNadiaTest"
+        },
+        "secretName": "AdminUsr"
+      }
+    }
+  }
+}
