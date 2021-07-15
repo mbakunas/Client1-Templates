@@ -97,7 +97,6 @@
             "apiVersion": "2021-04-01",
             "name": "[concat(parameters('subnetNames')[copyIndex()], '-rt')]",
             "resourceGroup": "[parameters('networkResourceGroupName')]",
-            "location": "[variables('constants').resourceGroupLocation]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -119,7 +118,6 @@
             "apiVersion": "2021-04-01",
             "name": "fluor-sea-prod-gw-subnet-rt",
             "resourceGroup": "[parameters('networkResourceGroupName')]",
-            "location": "[variables('constants').resourceGroupLocation]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -137,7 +135,6 @@
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').vnet]",
             "resourceGroup": "[variables('constants').location]",
-            "location": "[variables('constants').resourceGroupLocation]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/resourceGroups/', parameters('networkResourceGroupName'))]",
                 "routeTablesLoop"
