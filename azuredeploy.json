@@ -97,6 +97,7 @@
             "apiVersion": "2021-04-01",
             "name": "[concat(parameters('subnetNames')[copyIndex()], '-rt')]",
             "resourceGroup": "[parameters('networkResourceGroupName')]",
+            "tags": "[resourceGroup().tags]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -118,6 +119,7 @@
             "apiVersion": "2021-04-01",
             "name": "fluor-sea-prod-gw-subnet-rt",
             "resourceGroup": "[parameters('networkResourceGroupName')]",
+            "tags": "[resourceGroup().tags]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
