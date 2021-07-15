@@ -92,13 +92,52 @@
             "tags": "[parameters('networkResourceGroupTags')]"
         },
         {
+            "comments": "Route Tables",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2021-04-01",
+            "name": "[concat(parameters('subnetNames')[copyIndex()], '-rt')]",
+            "resourceGroup": "[parameters('networkResourceGroupName')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('constants').templateLocationURI, 'RouteTable.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "routeTable_name": {"value": "[concat(parameters('subnetNames')[copyIndex()], '-rt')]"}
+                }
+            },
+            "copy": {
+                "name": "routeTablesLoop",
+                "count": "[length(parameters('subnetNames'))]"
+            }
+        },
+        {
+            "comments": "Route Table for Gateway Subnet",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2021-04-01",
+            "name": "fluor-sea-prod-gw-subnet-rt",
+            "resourceGroup": "[parameters('networkResourceGroupName')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('constants').templateLocationURI, 'RouteTable.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "routeTable_name": {"value": "fluor-sea-prod-gw-subnet-rt"}
+                }
+            }
+        },
+        {
             "comments": "VNet",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').vnet]",
             "resourceGroup": "[parameters('networkResourceGroupName')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/resourceGroups/', parameters('networkResourceGroupName'))]"
+                "[resourceId('Microsoft.Resources/resourceGroups/', parameters('networkResourceGroupName'))]",
+                "routeTablesLoop"
             ],
             "properties": {
                 "mode": "Incremental",
