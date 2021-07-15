@@ -72,7 +72,7 @@
                 "addressPrefix": "[parameters('subnet_Addresses')[copyIndex()]]",
                 "networkSecurityGroup": "[if(not(equals(variables('subnetNsgJson')[copyIndex()], 'NONE')), variables('subnetNsgJson')[copyIndex()], json('null'))]",
                 "routeTable": {
-                    "id": "[resourceId('Microsoft.Network/routeTables', concat(parameters('subnet_Names')[copyIndex()]), '-rt')]"
+                    "id": "[resourceId('Microsoft.Network/routeTables', concat(parameters('subnet_Names')[copyIndex()], '-rt'))]"
                 },
                 "serviceEndpoints": [],
                 "delegations": [],
