@@ -142,7 +142,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').vnet]",
-            "resourceGroup": "[variables('constants').location]",
+            "resourceGroup": "[parameters('networkResourceGroupName')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/resourceGroups/', parameters('networkResourceGroupName'))]",
                 "routeTablesLoop",
