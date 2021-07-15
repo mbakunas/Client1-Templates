@@ -1,0 +1,135 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "subscriptionId": {
+      "value": "cfe66d2a-acc8-4c3f-bdfe-b02aee21e309"
+    },
+    "location": {
+      "value": "Southeast Asia"
+    },
+    "virtualNetworks_fluor-sea-prod-vnet": {
+      "value": {
+        "name": "fluor-sea-prod-vnet",
+        "properties": {
+          "addressSpace": {
+            "addressPrefixes": [
+              "10.144.0.0/20"
+            ]
+          },
+          "subnets": [
+            {
+              "name": "fluor-sea-prod-bustier-subnet",
+              "properties": {
+                "addressPrefix": "10.144.8.0/24"
+              }
+            }
+          ],
+          "enableDdosProtection": false
+        }
+      }
+    },
+    "networkInterfaces_nicSFAPPCTX002": {
+      "value": {
+        "name": "nicSFAPPCTX002",
+        "tags": {
+          "SAP Project Code": "S5FL",
+          "OS": "W2012R2d",
+          "application": "Citrix-App",
+          "WSUS": "Prod",
+          "RunningState": "on"
+        },
+        "properties": {
+          "ipConfigurations": [
+            {
+              "name": "ipconfig1",
+              "properties": {
+                "privateIPAllocationMethod": "Dynamic",
+                "applicationSecurityGroups": []
+              }
+            }
+          ],
+          "enableAcceleratedNetworking": false,
+          "enableIPForwarding": false
+        }
+      }
+    },
+    "virtualMachines_SFAPPCTX002": {
+      "value": {
+        "name": "SFAPPCTX002",
+        "tags": {
+          "SAP Project Code": "S5FL",
+          "OS": "W2012R2d",
+          "application": "Citrix-App",
+          "WSUS": "Prod",
+          "RunningState": "on"
+        },
+        "properties": {
+          "hardwareProfile": {
+            "vmSize": "Standard_F4s_v2"
+          },
+          "LicenseType": "None",
+          "osProfile": {
+            "computerName": "SFAPPCTX002",
+            "adminUsername": "AdminUser"
+          },
+          "storageProfile": {
+            "imageReference": {
+              "publisher": "MicrosoftWindowsServer",
+              "offer": "WindowsServer",
+              "sku": "2012-R2-Datacenter",
+              "version": "latest"
+            },
+            "osDisk": {
+              "createOption": "FromImage",
+              "managedDisk": {
+                "storageAccountType": "Standard_LRS"
+              },
+              "caching": "ReadWrite"
+            },
+            "dataDisks": []
+          },
+          "networkProfile": {
+            "networkInterfaces": [
+              {
+                "properties": {
+                  "primary": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "virtualMachines_extensions_SFAPPCTX002_antimalware": {
+      "value": {
+        "name": "antimalware",
+        "properties": {
+          "settings": {
+            "AntimalwareEnabled": "true",
+            "Exclusions": {
+              "Paths": "C:\\Users",
+              "Extensions": ".txt",
+              "Processes": "taskmgr.exe"
+            },
+            "RealtimeProtectionEnabled": "true",
+            "ScheduledScanSettings": {
+              "isEnabled": "true",
+              "scanType": "Quick",
+              "day": "7",
+              "time": "120"
+            }
+          }
+        }
+      }
+    },
+    "KvSecretAdminUser": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/cfe66d2a-acc8-4c3f-bdfe-b02aee21e309/resourceGroups/fluor-sea-prod-rg02-s/providers/Microsoft.KeyVault/vaults/vmKeys"
+        },
+        "secretName": "AdminUser"
+      }
+    }
+  }
+}

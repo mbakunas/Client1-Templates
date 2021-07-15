@@ -1,0 +1,102 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "subscriptionId": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "networkInterfaces_nicSFAPPCNS002": {
+      "type": "object"
+    },
+    "virtualMachines_SFAPPCNS002": {
+      "type": "object"
+    },
+    "KvSecretAdminUsr": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Parameter retrieved from the deployments key vault with secret name 'AdminUsr'"
+      }
+    }
+  },
+  "variables": {
+    "rgTags": {}
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[parameters('networkInterfaces_nicSFAPPCNS002').name]",
+      "apiVersion": "2018-11-01",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('networkInterfaces_nicSFAPPCNS002').tags]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_fluor-sea-prod-vnet').name)]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "[parameters('networkInterfaces_nicSFAPPCNS002').properties.ipConfigurations[0].name]",
+            "properties": {
+              "privateIPAllocationMethod": "[parameters('networkInterfaces_nicSFAPPCNS002').properties.ipConfigurations[0].properties.privateIPAllocationMethod]",
+              "subnet": {
+                "id": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', resourceGroup().name, '/providers/', 'Microsoft.Network/virtualNetworks', '/', parameters('virtualNetworks_fluor-sea-prod-vnet').name, '/subnets/', parameters('virtualNetworks_fluor-sea-prod-vnet').properties.subnets[0].name)]"
+              },
+              "applicationSecurityGroups": "[array(parameters('networkInterfaces_nicSFAPPCNS002').properties.ipConfigurations[0].properties.applicationSecurityGroups)]"
+            }
+          }
+        ],
+        "enableAcceleratedNetworking": "[parameters('networkInterfaces_nicSFAPPCNS002').properties.enableAcceleratedNetworking]",
+        "enableIPForwarding": "[parameters('networkInterfaces_nicSFAPPCNS002').properties.enableIPForwarding]"
+      }
+    },
+    {
+      "name": "[parameters('virtualMachines_SFAPPCNS002').name]",
+      "apiVersion": "2018-06-01",
+      "type": "Microsoft.Compute/virtualMachines",
+      "tags": "[parameters('virtualMachines_SFAPPCNS002').tags]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_nicSFAPPCNS002').name)]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('virtualMachines_SFAPPCNS002').properties.hardwareProfile.vmSize]"
+        },
+        "osProfile": {
+          "computerName": "[parameters('virtualMachines_SFAPPCNS002').properties.osProfile.computerName]",
+          "adminPassword": "[parameters('KvSecretAdminUsr')]",
+          "adminUsername": "[parameters('virtualMachines_SFAPPCNS002').properties.osProfile.adminUsername]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('virtualMachines_SFAPPCNS002').properties.storageProfile.imageReference.publisher]",
+            "offer": "[parameters('virtualMachines_SFAPPCNS002').properties.storageProfile.imageReference.offer]",
+            "sku": "[parameters('virtualMachines_SFAPPCNS002').properties.storageProfile.imageReference.sku]",
+            "version": "[parameters('virtualMachines_SFAPPCNS002').properties.storageProfile.imageReference.version]"
+          },
+          "osDisk": {
+            "createOption": "[parameters('virtualMachines_SFAPPCNS002').properties.storageProfile.osDisk.createOption]",
+            "managedDisk": {
+              "storageAccountType": "[parameters('virtualMachines_SFAPPCNS002').properties.storageProfile.osDisk.managedDisk.storageAccountType]"
+            },
+            "caching": "[parameters('virtualMachines_SFAPPCNS002').properties.storageProfile.osDisk.caching]"
+          },
+          "dataDisks": "[array(parameters('virtualMachines_SFAPPCNS002').properties.storageProfile.dataDisks)]"
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_nicSFAPPCNS002').name)]",
+              "properties": {
+                "primary": "[parameters('virtualMachines_SFAPPCNS002').properties.networkProfile.networkInterfaces[0].properties.primary]"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}

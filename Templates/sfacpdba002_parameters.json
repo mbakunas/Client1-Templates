@@ -1,0 +1,210 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "subscriptionId": {
+      "value": "cfe66d2a-acc8-4c3f-bdfe-b02aee21e309"
+    },
+    "location": {
+      "value": "Southeast Asia"
+    },
+    "virtualNetworks_fluor-sea-prod-vnet": {
+      "value": {
+        "name": "fluor-sea-prod-vnet",
+        "properties": {
+          "addressSpace": {
+            "addressPrefixes": [
+              "10.144.0.0/20"
+            ]
+          },
+          "subnets": [
+            {
+              "name": "fluor-sea-prod-datatier-subnet",
+              "properties": {
+                "addressPrefix": "10.144.9.0/24"
+              }
+            }
+          ],
+          "enableDdosProtection": false
+        }
+      }
+    },
+    "networkInterfaces_nicSFACPDBA002": {
+      "value": {
+        "name": "nicSFACPDBA002",
+        "tags": {
+          "Application": "SQL Database",
+          "SAP Project Code": "SSFL",
+          "OS": "W2016d",
+          "WSUS": "Prod"
+        },
+        "properties": {
+          "ipConfigurations": [
+            {
+              "name": "ipconfig1",
+              "properties": {
+                "privateIPAllocationMethod": "Static",
+                "privateIPAddress": "10.144.9.9",
+                "applicationSecurityGroups": []
+              }
+            }
+          ],
+          "enableAcceleratedNetworking": false,
+          "enableIPForwarding": false
+        }
+      }
+    },
+    "disks_SFACPDBA002-datadisk0": {
+      "value": {
+        "name": "SFACPDBA002-datadisk0",
+        "tags": {
+          "Application": "SQL Database",
+          "SAP Project Code": "SSFL",
+          "OS": "W2016d",
+          "WSUS": "Prod"
+        },
+        "sku": {
+          "name": "Premium_LRS"
+        },
+        "properties": {
+          "creationData": {
+            "createOption": "Empty"
+          },
+          "diskSizeGB": 512
+        }
+      }
+    },
+    "disks_SFACPDBA002-datadisk1": {
+      "value": {
+        "name": "SFACPDBA002-datadisk1",
+        "tags": {
+          "Application": "SQL Database",
+          "SAP Project Code": "SSFL",
+          "OS": "W2016d",
+          "WSUS": "Prod"
+        },
+        "sku": {
+          "name": "Premium_LRS"
+        },
+        "properties": {
+          "creationData": {
+            "createOption": "Empty"
+          },
+          "diskSizeGB": 256
+        }
+      }
+    },
+    "disks_SFACPDBA002-datadisk2": {
+      "value": {
+        "name": "SFACPDBA002-datadisk2",
+        "tags": {
+          "Application": "SQL Database",
+          "SAP Project Code": "SSFL",
+          "OS": "W2016d",
+          "WSUS": "Prod"
+        },
+        "sku": {
+          "name": "Premium_LRS"
+        },
+        "properties": {
+          "creationData": {
+            "createOption": "Empty"
+          },
+          "diskSizeGB": 64
+        }
+      }
+    },
+    "virtualMachines_SFACPDBA002": {
+      "value": {
+        "name": "SFACPDBA002",
+        "tags": {
+          "Application": "SQL Database",
+          "SAP Project Code": "SSFL",
+          "OS": "W2016d",
+          "WSUS": "Prod"
+        },
+        "properties": {
+          "hardwareProfile": {
+            "vmSize": "Standard_D16s_v3"
+          },
+          "LicenseType": "Windows_Server",
+          "osProfile": {
+            "computerName": "SFACPDBA002",
+            "adminUsername": "AdminUser"
+          },
+          "storageProfile": {
+            "imageReference": {
+              "publisher": "MicrosoftWindowsServer",
+              "offer": "WindowsServer",
+              "sku": "2016-Datacenter",
+              "version": "latest"
+            },
+            "osDisk": {
+              "createOption": "FromImage",
+              "managedDisk": {
+                "storageAccountType": "Premium_LRS"
+              },
+              "caching": "ReadWrite"
+            },
+            "dataDisks": [
+              {
+                "caching": "ReadWrite",
+                "lun": 0,
+                "createOption": "Attach"
+              },
+              {
+                "caching": "ReadWrite",
+                "lun": 1,
+                "createOption": "Attach"
+              },
+              {
+                "caching": "ReadWrite",
+                "lun": 2,
+                "createOption": "Attach"
+              }
+            ]
+          },
+          "networkProfile": {
+            "networkInterfaces": [
+              {
+                "properties": {
+                  "primary": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "virtualMachines_extensions_SFACPDBA002_antimalware": {
+      "value": {
+        "name": "antimalware",
+        "properties": {
+          "settings": {
+            "AntimalwareEnabled": "true",
+            "Exclusions": {
+              "Paths": "C:\\Users",
+              "Extensions": ".txt",
+              "Processes": "taskmgr.exe"
+            },
+            "RealtimeProtectionEnabled": "true",
+            "ScheduledScanSettings": {
+              "isEnabled": "true",
+              "scanType": "Quick",
+              "day": "7",
+              "time": "120"
+            }
+          }
+        }
+      }
+    },
+    "KvSecretAdminUser": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/cfe66d2a-acc8-4c3f-bdfe-b02aee21e309/resourceGroups/FLUOR-SEA-PROD-RG01/providers/Microsoft.KeyVault/vaults/CSSKeysAdmin"
+        },
+        "secretName": "AdminUser"
+      }
+    }
+  }
+}
