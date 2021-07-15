@@ -19,6 +19,9 @@
         },
         "subnet_NSG_Names": {
             "type": "array"
+        },
+        "location": {
+            "type": "string"
         }
     },
     "variables": {
@@ -37,7 +40,7 @@
             "name": "[parameters('virtualNetwork_name')]",
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2019-11-01",
-            "location": "[variables('location')]",
+            "location": "[parameters('location')]",
             "tags": "[resourceGroup().tags]",
             "properties": {
                 "addressSpace": {

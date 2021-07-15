@@ -65,6 +65,9 @@
                 "NONE",
                 "NONE"
             ]
+        },
+        "location": {
+            "value": "eastus2"
         }
     }
 }
