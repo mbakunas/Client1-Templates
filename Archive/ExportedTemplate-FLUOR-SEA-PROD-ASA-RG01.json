@@ -1,0 +1,1006 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageAccounts_flrsf99asa1_name": {
+            "defaultValue": "flrsf99asa1",
+            "type": "String"
+        },
+        "virtualMachines_FLRSF99_ASA1_name": {
+            "defaultValue": "FLRSF99-ASA1",
+            "type": "String"
+        },
+        "networkInterfaces_FLRSF99_ASA1_Nic0_name": {
+            "defaultValue": "FLRSF99-ASA1-Nic0",
+            "type": "String"
+        },
+        "networkInterfaces_FLRSF99_ASA1_Nic1_name": {
+            "defaultValue": "FLRSF99-ASA1-Nic1",
+            "type": "String"
+        },
+        "networkInterfaces_FLRSF99_ASA1_Nic2_name": {
+            "defaultValue": "FLRSF99-ASA1-Nic2",
+            "type": "String"
+        },
+        "networkInterfaces_FLRSF99_ASA1_Nic3_name": {
+            "defaultValue": "FLRSF99-ASA1-Nic3",
+            "type": "String"
+        },
+        "publicIPAddresses_flrsf99asa1_pubip_name": {
+            "defaultValue": "flrsf99asa1-pubip",
+            "type": "String"
+        },
+        "publicIPAddresses_flrsf99asa1_pubip_2_name": {
+            "defaultValue": "flrsf99asa1-pubip-2",
+            "type": "String"
+        },
+        "publicIPAddresses_flrsf99asa1_pupip_3_name": {
+            "defaultValue": "flrsf99asa1-pupip-3",
+            "type": "String"
+        },
+        "publicIPAddresses_flrsf99asa1_pupip_4_name": {
+            "defaultValue": "flrsf99asa1-pupip-4",
+            "type": "String"
+        },
+        "networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name": {
+            "defaultValue": "FLRSF99-ASA1-SSH-SecurityGroup",
+            "type": "String"
+        },
+        "virtualNetworks_fluor_sea_prod_vnet_externalid": {
+            "defaultValue": "/subscriptions/cfe66d2a-acc8-4c3f-bdfe-b02aee21e309/resourceGroups/FLUOR-SEA-PROD-RG01/providers/Microsoft.Network/virtualNetworks/fluor-sea-prod-vnet",
+            "type": "String"
+        }
+    },
+    "variables": {
+        "location": "[resourceGroup().location]",
+        "subnet0": "[concat(parameters('virtualNetworks_fluor_sea_prod_vnet_externalid'), '/subnets/fluor-sea-prod-mgmt-subnet')]",
+        "subnet1": "[concat(parameters('virtualNetworks_fluor_sea_prod_vnet_externalid'), '/subnets/fluor-sea-prod-privdmzin-subnet')]",
+        "subnet2": "[concat(parameters('virtualNetworks_fluor_sea_prod_vnet_externalid'), '/subnets/fluor-sea-prod-privdmzout-subnet')]",
+        "subnet3": "[concat(parameters('virtualNetworks_fluor_sea_prod_vnet_externalid'), '/subnets/fluor-sea-prod-pubdmzout-subnet')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('networkInterfaces_FLRSF99_ASA1_Nic1_name')]",
+            "location": "[variables('location')]",
+            "tags": {
+                "SAP Project Code": "S5FL"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAddress": "10.144.2.6",
+                            "privateIPAllocationMethod": "Static",
+                            "subnet": {
+                                "id": "[variables('subnet1')]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableAcceleratedNetworking": false,
+                "enableIPForwarding": true
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('networkInterfaces_FLRSF99_ASA1_Nic2_name')]",
+            "location": "[variables('location')]",
+            "tags": {
+                "SAP Project Code": "S5FL"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAddress": "10.144.3.4",
+                            "privateIPAllocationMethod": "Static",
+                            "subnet": {
+                                "id": "[variables('subnet2')]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableAcceleratedNetworking": false,
+                "enableIPForwarding": true
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('networkInterfaces_FLRSF99_ASA1_Nic3_name')]",
+            "location": "[variables('location')]",
+            "tags": {
+                "SAP Project Code": "S5FL"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAddress": "10.144.5.4",
+                            "privateIPAllocationMethod": "Static",
+                            "subnet": {
+                                "id": "[variables('subnet3')]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableAcceleratedNetworking": false,
+                "enableIPForwarding": true
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name')]",
+            "location": "[variables('location')]",
+            "tags": {
+                "SAP Project Code": "S5FL"
+            },
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "SSH-Rule",
+                        "properties": {
+                            "description": "Allow SSH",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "Internet",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "UDP-Rule1",
+                        "properties": {
+                            "description": "Allow UDP",
+                            "protocol": "UDP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "500",
+                            "sourceAddressPrefix": "Internet",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 101,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "UDP-Rule2",
+                        "properties": {
+                            "description": "Allow UDP",
+                            "protocol": "UDP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "4500",
+                            "sourceAddressPrefix": "Internet",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 102,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "Port_443",
+                        "properties": {
+                            "description": "Allow access to Citrix NetScaler GW\nNAT: 10.144.1.6 -> 10.144.6.23\n(public IP: 13.67.105.224)",
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "10.144.1.6",
+                            "access": "Allow",
+                            "priority": 112,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "NetScaler_GW_10.144.6.24_port_443",
+                        "properties": {
+                            "description": "Allow access to Citrix NetScaler GW\nNAT: 10.144.1.7 -> 10.144.6.24\n(public IP: 168.63.239.50)",
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "10.144.1.7",
+                            "access": "Allow",
+                            "priority": 113,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "NetScaler_GW_10.144.6.24_port_8443",
+                        "properties": {
+                            "description": "Allows inbound access from Internet on port 8443",
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "8443",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "10.144.1.7/32",
+                            "access": "Allow",
+                            "priority": 123,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "Netscaler_GW_10.144.6.24_port_80",
+                        "properties": {
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "80",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "10.144.1.6",
+                            "access": "Allow",
+                            "priority": 133,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "Netscaler_GW_10.144.6.24b_port_80",
+                        "properties": {
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "80",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "10.144.1.7",
+                            "access": "Allow",
+                            "priority": 143,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "NetScaler_GW_10.144.6.23_udp_443_HDX",
+                        "properties": {
+                            "description": "Allowing UDP Port 443 in support of Citrix HDX Protocol",
+                            "protocol": "UDP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "10.144.1.6/32",
+                            "access": "Allow",
+                            "priority": 111,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "Pulse_Secure_GW_10.144.3.7_port_80_443",
+                        "properties": {
+                            "description": "Allow inbound access for Pulse Secure GW from the Internet . Was 141.197.2.187/32,203.153.237.10/32 now All.",
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "10.144.1.8/32",
+                            "access": "Allow",
+                            "priority": 153,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [
+                                "80",
+                                "443"
+                            ],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('publicIPAddresses_flrsf99asa1_pubip_name')]",
+            "location": "[variables('location')]",
+            "tags": {
+                "SAP Project Code": "S5FL"
+            },
+            "sku": {
+                "name": "Basic",
+                "tier": "Regional"
+            },
+            "properties": {
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4,
+                "dnsSettings": {
+                    "domainNameLabel": "flrsf99asa1x",
+                    "fqdn": "flrsf99asa1x.[variables('location')].cloudapp.azure.com"
+                },
+                "ipTags": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('publicIPAddresses_flrsf99asa1_pubip_2_name')]",
+            "location": "[variables('location')]",
+            "tags": {
+                "SAP Project Code": "S5FL"
+            },
+            "sku": {
+                "name": "Basic",
+                "tier": "Regional"
+            },
+            "properties": {
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4,
+                "ipTags": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('publicIPAddresses_flrsf99asa1_pupip_3_name')]",
+            "location": "[variables('location')]",
+            "tags": {
+                "SAP Project Code": "S5FL"
+            },
+            "sku": {
+                "name": "Basic",
+                "tier": "Regional"
+            },
+            "properties": {
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4,
+                "ipTags": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('publicIPAddresses_flrsf99asa1_pupip_4_name')]",
+            "location": "[variables('location')]",
+            "tags": {
+                "SAP Project Code": "S5FL"
+            },
+            "sku": {
+                "name": "Basic",
+                "tier": "Regional"
+            },
+            "properties": {
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4,
+                "ipTags": []
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-01-01",
+            "name": "[parameters('storageAccounts_flrsf99asa1_name')]",
+            "location": "[variables('location')]",
+            "tags": {
+                "SAP Project Code": "S5FL"
+            },
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "properties": {
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": false,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "keyType": "Account",
+                            "enabled": true
+                        },
+                        "blob": {
+                            "keyType": "Account",
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2020-12-01",
+            "name": "[concat(parameters('virtualMachines_FLRSF99_ASA1_name'), '/AzureNetworkWatcherExtension')]",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_FLRSF99_ASA1_name'))]"
+            ],
+            "properties": {
+                "autoUpgradeMinorVersion": true,
+                "publisher": "Microsoft.Azure.NetworkWatcher",
+                "type": "NetworkWatcherAgentLinux",
+                "typeHandlerVersion": "1.4"
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2020-12-01",
+            "name": "[concat(parameters('virtualMachines_FLRSF99_ASA1_name'), '/VMSnapshotLinux')]",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_FLRSF99_ASA1_name'))]"
+            ],
+            "properties": {
+                "autoUpgradeMinorVersion": false,
+                "publisher": "Microsoft.Azure.RecoveryServices",
+                "type": "VMSnapshotLinux",
+                "typeHandlerVersion": "1.0",
+                "settings": {
+                    "locale": "en-us",
+                    "taskId": "b78c4363-472c-4ea2-b468-69e061de2907_1",
+                    "commandToExecute": "Snapshot",
+                    "objectStr": "eyJiYWNrdXBNZXRhZGF0YSI6W3siS2V5IjoiQ3VycmVudFRpY2tzIiwiVmFsdWUiOiI2Mzc2MTE2ODIzMTY3MzM2MzkifSx7IktleSI6IkJhY2tVcE9wZXJhdGlvbkpvYklkIiwiVmFsdWUiOiIzMDRlZWY3OS0yMzllLTRhZTItOTNkNy04MmQ2ZjU0NjEwNTEifSx7IktleSI6IkJhY2tVcE9wZXJhdGlvbkN1cnJlbnRJZCIsIlZhbHVlIjoiYjc4YzQzNjMtNDcyYy00ZWEyLWI0NjgtNjllMDYxZGUyOTA3In0seyJLZXkiOiJCYWNrVXBSZXRyeUNvdW50IiwiVmFsdWUiOiIwIn0seyJLZXkiOiJTbmFwU2hvdEZhaWx1cmVSZXRyeUNvdW50IiwiVmFsdWUiOiIwIn0seyJLZXkiOiJCYWNrVXBPd25lciIsIlZhbHVlIjoiSUFBU1ZtQmFja1VwIn1dLCJpbmNsdWRlZERpc2tzIjpudWxsLCJzbmFwc2hvdFRhc2tUb2tlbiI6IiJ9",
+                    "logsBlobUri": "https://seapod01coord1exsapk732.blob.core.windows.net/bcdrextensionlogs-cfe66d2a-acc8-4c3f-bdfe-b02aee21e309/FLUOR-SEA-PROD-ASA-RG01-FLRSF99-ASA1.v2.Logs.txt?sv=2018-03-28&sr=b&sig=drEV%2F3sZbV0xgzNet5XWLPmYBkhO6GpZrp59vpg%2FjDw%3D&st=2021-07-06T11%3A32%3A12Z&se=2021-07-06T14%3A37%3A12Z&sp=rw",
+                    "statusBlobUri": "https://seapod01coord1exsapk732.blob.core.windows.net/bcdrextensionlogs-cfe66d2a-acc8-4c3f-bdfe-b02aee21e309/FLUOR-SEA-PROD-ASA-RG01-FLRSF99-ASA1.v2.Status.txt?sv=2018-03-28&sr=b&sig=W0D0Q9sGiCptOnlo7Cia6iZdBS%2Fz5196%2FxP9XTT7GWg%3D&st=2021-07-06T11%3A32%3A12Z&se=2021-07-06T14%3A37%3A12Z&sp=rw",
+                    "commandStartTimeUTCTicks": "637611682320414137",
+                    "vmType": "microsoft.compute/virtualmachines"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-11-01",
+            "name": "[concat(parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'), '/NetScaler_GW_10.144.6.23_udp_443_HDX')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'))]"
+            ],
+            "properties": {
+                "description": "Allowing UDP Port 443 in support of Citrix HDX Protocol",
+                "protocol": "UDP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "443",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "10.144.1.6/32",
+                "access": "Allow",
+                "priority": 111,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-11-01",
+            "name": "[concat(parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'), '/NetScaler_GW_10.144.6.24_port_443')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'))]"
+            ],
+            "properties": {
+                "description": "Allow access to Citrix NetScaler GW\nNAT: 10.144.1.7 -> 10.144.6.24\n(public IP: 168.63.239.50)",
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "443",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "10.144.1.7",
+                "access": "Allow",
+                "priority": 113,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-11-01",
+            "name": "[concat(parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'), '/Netscaler_GW_10.144.6.24_port_80')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'))]"
+            ],
+            "properties": {
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "80",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "10.144.1.6",
+                "access": "Allow",
+                "priority": 133,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-11-01",
+            "name": "[concat(parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'), '/NetScaler_GW_10.144.6.24_port_8443')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'))]"
+            ],
+            "properties": {
+                "description": "Allows inbound access from Internet on port 8443",
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "8443",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "10.144.1.7/32",
+                "access": "Allow",
+                "priority": 123,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-11-01",
+            "name": "[concat(parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'), '/Netscaler_GW_10.144.6.24b_port_80')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'))]"
+            ],
+            "properties": {
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "80",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "10.144.1.7",
+                "access": "Allow",
+                "priority": 143,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-11-01",
+            "name": "[concat(parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'), '/Port_443')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'))]"
+            ],
+            "properties": {
+                "description": "Allow access to Citrix NetScaler GW\nNAT: 10.144.1.6 -> 10.144.6.23\n(public IP: 13.67.105.224)",
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "443",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "10.144.1.6",
+                "access": "Allow",
+                "priority": 112,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-11-01",
+            "name": "[concat(parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'), '/Pulse_Secure_GW_10.144.3.7_port_80_443')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'))]"
+            ],
+            "properties": {
+                "description": "Allow inbound access for Pulse Secure GW from the Internet . Was 141.197.2.187/32,203.153.237.10/32 now All.",
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "10.144.1.8/32",
+                "access": "Allow",
+                "priority": 153,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [
+                    "80",
+                    "443"
+                ],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-11-01",
+            "name": "[concat(parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'), '/SSH-Rule')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'))]"
+            ],
+            "properties": {
+                "description": "Allow SSH",
+                "protocol": "Tcp",
+                "sourcePortRange": "*",
+                "destinationPortRange": "22",
+                "sourceAddressPrefix": "Internet",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 100,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-11-01",
+            "name": "[concat(parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'), '/UDP-Rule1')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'))]"
+            ],
+            "properties": {
+                "description": "Allow UDP",
+                "protocol": "UDP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "500",
+                "sourceAddressPrefix": "Internet",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 101,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-11-01",
+            "name": "[concat(parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'), '/UDP-Rule2')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'))]"
+            ],
+            "properties": {
+                "description": "Allow UDP",
+                "protocol": "UDP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "4500",
+                "sourceAddressPrefix": "Internet",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 102,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices",
+            "apiVersion": "2021-01-01",
+            "name": "[concat(parameters('storageAccounts_flrsf99asa1_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_flrsf99asa1_name'))]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                },
+                "deleteRetentionPolicy": {
+                    "enabled": false
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/fileServices",
+            "apiVersion": "2021-01-01",
+            "name": "[concat(parameters('storageAccounts_flrsf99asa1_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_flrsf99asa1_name'))]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "protocolSettings": {
+                    "smb": {}
+                },
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/queueServices",
+            "apiVersion": "2021-01-01",
+            "name": "[concat(parameters('storageAccounts_flrsf99asa1_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_flrsf99asa1_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/tableServices",
+            "apiVersion": "2021-01-01",
+            "name": "[concat(parameters('storageAccounts_flrsf99asa1_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_flrsf99asa1_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2021-01-01",
+            "name": "[concat(parameters('storageAccounts_flrsf99asa1_name'), '/default/bootdiagnostics-flrsf99as-a2e86151-e7e4-4090-b639-2267041b32a1')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_flrsf99asa1_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_flrsf99asa1_name'))]"
+            ],
+            "properties": {
+                "defaultEncryptionScope": "$account-encryption-key",
+                "denyEncryptionScopeOverride": false,
+                "publicAccess": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2021-01-01",
+            "name": "[concat(parameters('storageAccounts_flrsf99asa1_name'), '/default/', parameters('storageAccounts_flrsf99asa1_name'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_flrsf99asa1_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_flrsf99asa1_name'))]"
+            ],
+            "properties": {
+                "defaultEncryptionScope": "$account-encryption-key",
+                "denyEncryptionScopeOverride": false,
+                "publicAccess": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2020-12-01",
+            "name": "[parameters('virtualMachines_FLRSF99_ASA1_name')]",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/StorageAccounts', parameters('storageAccounts_flrsf99asa1_name'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_FLRSF99_ASA1_Nic0_name'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_FLRSF99_ASA1_Nic1_name'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_FLRSF99_ASA1_Nic2_name'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_FLRSF99_ASA1_Nic3_name'))]"
+            ],
+            "tags": {
+                "Application": "Cisco vASA Appliance",
+                "SAP Project Code": "S5FL"
+            },
+            "plan": {
+                "name": "asav-azure-byol",
+                "product": "cisco-asav",
+                "publisher": "cisco"
+            },
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_D3_v2"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "cisco",
+                        "offer": "cisco-asav",
+                        "sku": "asav-azure-byol",
+                        "version": "9161.0.0"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[concat(parameters('virtualMachines_FLRSF99_ASA1_name'), '-disk')]",
+                        "createOption": "FromImage",
+                        "vhd": {
+                            "uri": "[concat('https://', parameters('storageAccounts_flrsf99asa1_name'), '.blob.core.windows.net/', parameters('storageAccounts_flrsf99asa1_name'), concat('/', parameters('virtualMachines_FLRSF99_ASA1_name'), '-disk.vhd'))]"
+                        },
+                        "caching": "ReadWrite",
+                        "diskSizeGB": 9
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_FLRSF99_ASA1_name')]",
+                    "adminUsername": "cisco",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false,
+                        "patchSettings": {
+                            "patchMode": "ImageDefault",
+                            "assessmentMode": "ImageDefault"
+                        }
+                    },
+                    "secrets": []
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_FLRSF99_ASA1_Nic0_name'))]",
+                            "properties": {
+                                "primary": true
+                            }
+                        },
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_FLRSF99_ASA1_Nic1_name'))]",
+                            "properties": {
+                                "primary": false
+                            }
+                        },
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_FLRSF99_ASA1_Nic2_name'))]",
+                            "properties": {
+                                "primary": false
+                            }
+                        },
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_FLRSF99_ASA1_Nic3_name'))]",
+                            "properties": {
+                                "primary": false
+                            }
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[concat('https://', parameters('storageAccounts_flrsf99asa1_name'), '.blob.core.windows.net/')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('networkInterfaces_FLRSF99_ASA1_Nic0_name')]",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_flrsf99asa1_pubip_name'))]",
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_flrsf99asa1_pubip_2_name'))]",
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_flrsf99asa1_pupip_3_name'))]",
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_flrsf99asa1_pupip_4_name'))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'))]"
+            ],
+            "tags": {
+                "SAP Project Code": "S5FL"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAddress": "10.144.1.5",
+                            "privateIPAllocationMethod": "Static",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_flrsf99asa1_pubip_name'))]"
+                            },
+                            "subnet": {
+                                "id": "[variables('subnet0')]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    },
+                    {
+                        "name": "Ipconfig2",
+                        "properties": {
+                            "privateIPAddress": "10.144.1.6",
+                            "privateIPAllocationMethod": "Static",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_flrsf99asa1_pubip_2_name'))]"
+                            },
+                            "subnet": {
+                                "id": "[variables('subnet0')]"
+                            },
+                            "primary": false,
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    },
+                    {
+                        "name": "ipconfig3",
+                        "properties": {
+                            "privateIPAddress": "10.144.1.7",
+                            "privateIPAllocationMethod": "Static",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_flrsf99asa1_pupip_3_name'))]"
+                            },
+                            "subnet": {
+                                "id": "[variables('subnet0')]"
+                            },
+                            "primary": false,
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    },
+                    {
+                        "name": "ipconfig4",
+                        "properties": {
+                            "privateIPAddress": "10.144.1.8",
+                            "privateIPAllocationMethod": "Static",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_flrsf99asa1_pupip_4_name'))]"
+                            },
+                            "subnet": {
+                                "id": "[variables('subnet0')]"
+                            },
+                            "primary": false,
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableAcceleratedNetworking": false,
+                "enableIPForwarding": true,
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name'))]"
+                }
+            }
+        }
+    ]
+}

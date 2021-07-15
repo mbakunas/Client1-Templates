@@ -1,0 +1,42 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageAccounts_flrsf99asa1_name": {
+            "value": "flrsf99asa1x"
+        },
+        "virtualMachines_FLRSF99_ASA1_name": {
+            "value": "FLRSF99-ASA1"
+        },
+        "networkInterfaces_FLRSF99_ASA1_Nic0_name": {
+            "value": "FLRSF99-ASA1-Nic0"
+        },
+        "networkInterfaces_FLRSF99_ASA1_Nic1_name": {
+            "value": "FLRSF99-ASA1-Nic1"
+        },
+        "networkInterfaces_FLRSF99_ASA1_Nic2_name": {
+            "value": "FLRSF99-ASA1-Nic2"
+        },
+        "networkInterfaces_FLRSF99_ASA1_Nic3_name": {
+            "value": "FLRSF99-ASA1-Nic3"
+        },
+        "publicIPAddresses_flrsf99asa1_pubip_name": {
+            "value": "flrsf99asa1-pubip"
+        },
+        "publicIPAddresses_flrsf99asa1_pubip_2_name": {
+            "value": "flrsf99asa1-pubip-2"
+        },
+        "publicIPAddresses_flrsf99asa1_pupip_3_name": {
+            "value": "flrsf99asa1-pupip-3"
+        },
+        "publicIPAddresses_flrsf99asa1_pupip_4_name": {
+            "value": "flrsf99asa1-pupip-4"
+        },
+        "networkSecurityGroups_FLRSF99_ASA1_SSH_SecurityGroup_name": {
+            "value": "FLRSF99-ASA1-SSH-SecurityGroup"
+        },
+        "virtualNetworks_fluor_sea_prod_vnet_externalid": {
+            "value": "/subscriptions/fac1ea11-e5a7-4e74-8d7e-965344c54f56/resourceGroups/FLUOR-SEA-PROD-RG01/providers/Microsoft.Network/virtualNetworks/fluor-sea-prod-vnet"
+        }
+    }
+}
