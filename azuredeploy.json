@@ -79,7 +79,9 @@
         "deploymentName": "[deployment().Name]",
         "deploymentNames": {
             //"networkResourceGroup": "[concat(variables('deploymentName'), '-Network-ResourceGroup')]",
-            "vnet": "[concat(variables('deploymentName'), '-Network-VNet')]"
+            "vnet": "[concat(variables('deploymentName'), '-Network-VNet')]",
+            "routeTablesAll": "[concat(variables('deploymentName'), '-Network-RouteTables-')]",
+            "routeTableGwSubnet": "[concat(variables('deploymentName'), '-Network-RouteTables-GwSubnet')]"
         }
     },
     "resources": [
@@ -95,7 +97,7 @@
             "comments": "Route Tables",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2021-04-01",
-            "name": "[concat(parameters('subnetNames')[copyIndex()], '-rt')]",
+            "name": "[concat(variables('deploymentNames').routeTablesAll, copyIndex(1))]",
             "resourceGroup": "[parameters('networkResourceGroupName')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/resourceGroups/', parameters('networkResourceGroupName'))]"
@@ -119,7 +121,7 @@
             "comments": "Route Table for Gateway Subnet",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2021-04-01",
-            "name": "fluor-sea-prod-gw-subnet-rt",
+            "name": "[variables('deploymentNames').routeTableGwSubnet]",
             "resourceGroup": "[parameters('networkResourceGroupName')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/resourceGroups/', parameters('networkResourceGroupName'))]"
@@ -144,7 +146,7 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/resourceGroups/', parameters('networkResourceGroupName'))]",
                 "routeTablesLoop",
-                "[resourceId('Microsoft.Network/routeTables', 'fluor-sea-prod-gw-subnet-rt')]"
+                "[variables('deploymentNames').routeTableGwSubnet]"
             ],
             "properties": {
                 "mode": "Incremental",
