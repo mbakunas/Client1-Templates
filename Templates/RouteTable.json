@@ -15,8 +15,7 @@
             "type": "Microsoft.Network/routeTables",
             "apiVersion": "2019-11-01",
             "location": "[variables('location')]",
-            "tags": {
-            },
+            "tags": "[resourceGroup().tags]",
             "properties": {
                 "routes": [],
                 "disableBgpRoutePropagation": true
