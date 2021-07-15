@@ -161,7 +161,7 @@
                     "subnet_Names": {"value": "[parameters('subnetNames')]"},
                     "subnet_Addresses": {"value": "[parameters('subnetAddressSpaces')]"},
                     "subnet_NSG_Names": { "value": "[parameters('subnetNsgNames')]"},
-                    "location": { "value": "[parameters('subnetNsgNames')]"}
+                    "location": { "value": "[variables('constants').location]"}
                 }
             }
         },
