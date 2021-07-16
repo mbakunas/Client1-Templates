@@ -74,10 +74,10 @@
                 "NONE"
             ]
         },
-        "asaResourceGroupName": {
-            "value": "FLUOR-SEA-PROD-ASA-RG01"
+        "vmResourceGroupName": {
+            "value": "FLUOR-SEA-PROD-RG02-S"
         },
-        "asaResourceGroupTags": {
+        "vmResourceGroupTags": {
             "value": {
                 "SAP Project Code" : "S5FL"
             }
