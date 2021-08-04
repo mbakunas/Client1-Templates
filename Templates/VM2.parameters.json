@@ -1,0 +1,39 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+            "value": "SFAPPDDC001"
+        },
+        "vmSize": {
+            "value": "Standard_B2ms"
+        },
+        "vmOsDiskSku": {
+            "value": "2016-Datacenter"
+        },
+        "vmVnetName": {
+            "value": "fluor-sea-prod-vnet"
+        },
+        "vmSubnetName": {
+            "value": "fluor-sea-prod-datatier-subnet"
+        },
+        "vmAvSetName": {
+            "value": "ASFACPDBA-ASET01"
+        },
+        "bootDiagStorageAccount": {
+            "value": "vmbootdiagnostics01"
+        },
+        "location": {
+            "value": "eastus2"
+        },
+        "vmAdminName": {
+            "value": "fluorAdmin"
+        },
+        "vmAdminPassword": {
+            "value": "LongPassw0rd!"
+        },
+        "vnetResourceGroup": {
+            "value": "FLUOR-SEA-PROD-RG01"
+        }
+    }
+}

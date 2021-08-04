@@ -21,7 +21,8 @@
             "type": "string"
         },
         "dataDisks": {
-            "type": "array"
+            "type": "array",
+            "defaultValue": []
         },
         "bootDiagStorageAccount": {
             "type": "string"
@@ -129,7 +130,10 @@
                 "osDisk": {
                     "name": "[concat(parameters('vmName'), '-OsDisk')]",
                     "caching": "ReadWrite",
-                    "createOption": "FromImage"
+                    "createOption": "FromImage",
+                    "managedDisk": {
+                        "storageAccountType": "Premium_LRS"
+                    }
                 },
                 "copy": [
                     {
