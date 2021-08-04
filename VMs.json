@@ -1,0 +1,47 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "VMs": {
+            "type": "array"
+        },
+        "diagnosticsStorageAccountName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "constants": {
+            "location": "eastus2",
+            "diagnosticsStorageAccountKind": "Storage",
+            "diagnosticsStorageAccountType": "Standard_LRS"
+        }
+    },
+    "functions": [],
+    "resources": [
+        // create storage account for VM boot diagnostics
+        
+        {
+            "name": "[parameters('diagnosticsStorageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-04-01",
+            "location": "[variables('constants').location]",
+            "properties": {
+                "minimumTlsVersion": "TLS1_2"
+            },
+            "kind": "[variables('constants').diagnosticsStorageAccountKind]",
+            "sku": {
+                "name": "[variables('constants').diagnosticsStorageAccountType]"
+            }
+        }
+        // loop through VMs
+    ],
+    "outputs": {
+        "output1": {
+            "type": "array",
+            "copy": {
+                "count": "[length(parameters('VMs'))]",
+                "input": "[parameters('VMs')[copyIndex()].vmName]"
+            }
+        }
+    }
+}
