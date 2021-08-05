@@ -18,7 +18,8 @@
             "type": "string"
         },
         "vmAvSetName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": ""
         },
         "dataDisks": {
             "type": "array",
@@ -44,11 +45,13 @@
         "constants": {
             "availabilitySetPlatformFaultDomainCount": 2,
             "availabilitySetPlatformUpdateDomainCount": 5
-        }
+        },
+        "avSetNameJson": "[json(concat('{\"id\": \"', resourceId('Microsoft.Compute/availabilitySets', parameters('vmAvSetName')), '\"}'))]"
     },
     "functions": [],
     "resources": [
         {
+            "condition": "[not(equals(parameters('vmAvSetName'), ''))]",
             "name": "[parameters('vmAvSetName')]",
             "type": "Microsoft.Compute/availabilitySets",
             "apiVersion": "2019-07-01",
@@ -167,9 +170,7 @@
                     "storageUri": "[concat('https://', parameters('bootDiagStorageAccount'), '.blob.core.windows.net/')]"
                 }
             },
-            "availabilitySet": {
-                "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('vmAvSetName'))]"
-            }
+            "availabilitySet": "[if(equals(parameters('vmAvSetName'), ''), json('null'), variables('avSetNameJson'))]"
     }
     }
     ],
