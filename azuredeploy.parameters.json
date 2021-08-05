@@ -2,6 +2,9 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "assetLocationURI": {
+            "value": "https://raw.githubusercontent.com/mbakunas/Client1-Templates/master/"
+        },
         "networkResourceGroupName": {
             "value": "FLUOR-SEA-PROD-RG01"
         },
@@ -82,8 +85,450 @@
                 "SAP Project Code" : "S5FL"
             }
         },
-        "assetLocationURI": {
-            "value": "https://raw.githubusercontent.com/mbakunas/Client1-Templates/master/"
+        "diagnosticsStorageAccountName": {
+            "value": "fluorseaprodrg01diag683"
+        },
+        "VMs": {
+            "value": [
+                {
+                    "vmName": "SFACPDBA002",
+                    "vmSize": "Standard_D16s_v3",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-datatier-subnet",
+                    "vmAvSetName": "ASFACPDBA-ASET01",
+                    "dataDisks": [
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 64
+                        },
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 256
+                        },
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 512
+                        }
+                    ]
+                },
+                {
+                    "vmName": "SFACPDBA003",
+                    "vmSize": "Standard_D16s_v3",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-datatier-subnet",
+                    "vmAvSetName": "ASFACPDBA-ASET01",
+                    "dataDisks": [
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 64
+                        },
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 4095
+                        },
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 1024
+                        },
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 128
+                        }
+                    ]
+                },
+                {
+                    "vmName": "SFAPDWEB003",
+                    "vmSize": "Standard_F8s_v2",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-webtier-subnet",
+                    "dataDisks": [
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 16
+                        },
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 16
+                        },
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 50
+                        },
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 16
+                        },
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 16
+                        },
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 16
+                        },
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 50
+                        }
+                    ]
+                },
+                {
+                    "vmName": "SFAPPAFS001",
+                    "vmSize": "Standard_B2ms",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-datatier-subnet",
+                    "vmAvSetName": "ASFAPPAFS-ASET",
+                    "dataDisks": [
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 250
+                        }
+                    ]
+                },
+                {
+                    "vmName": "SFAPPAFS002",
+                    "vmSize": "Standard_B2ms",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-ipsintier-subnet",
+                    "dataDisks": [
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 50
+                        }
+                    ]
+                },
+                {
+                    "vmName": "SFAPPAPP001",
+                    "vmSize": "Standard_D16s_v3",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-bustier-subnet",
+                    "dataDisks": [
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 2048
+                        },
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 50
+                        }
+                    ]
+                },
+                {
+                    "vmName": "SFAPPAPP002",
+                    "vmSize": "Standard_D16s_v3",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-bustier-subnet",
+                    "dataDisks": [
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 512
+                        },
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 64
+                        }
+                    ]
+                },
+                {
+                    "vmName": "SFAPPAPP003",
+                    "vmSize": "Standard_F8s_v2",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-bustier-subnet",
+                    "dataDisks": [
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 100
+                        },
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 50
+                        }
+                    ]
+                },
+                {
+                    "vmName": "SFAPPAPP004",
+                    "vmSize": "Standard_D4s_v3",
+                    "vmOsDiskSku": "2012-R2-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-bustier-subnet",
+                    "dataDisks": [
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 130
+                        }
+                    ]
+                },
+                {
+                    "vmName": "SFAPPAPP005",
+                    "vmSize": "Standard_D16s_v3",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-bustier-subnet",
+                    "dataDisks": [
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 300
+                        }
+                    ]
+                },
+                {
+                    "vmName": "SFAPPCSF001",
+                    "vmSize": "Standard_F4s_v2",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-webtier-subnet",
+                    "vmAvSetName": "ASFAPPCSF-ASET"
+                },
+                {
+                    "vmName": "SFAPPCSF002",
+                    "vmSize": "Standard_F4s_v2",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-webtier-subnet",
+                    "vmAvSetName": "ASFAPPCSF-ASET"
+                },
+                {
+                    "vmName": "SFAPPCTX001",
+                    "vmSize": "Standard_F4s_v2",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-bustier-subnet",
+                    "vmAvSetName": "ASFAPPCTX-ASET"
+                },
+                {
+                    "vmName": "SFAPPCTX002",
+                    "vmSize": "Standard_F4s_v2",
+                    "vmOsDiskSku": "2012-R2-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-bustier-subnet"
+                },
+                {
+                    "vmName": "SFAPPCTX003",
+                    "vmSize": "Standard_F4s_v2",
+                    "vmOsDiskSku": "2012-R2-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-bustier-subnet"
+                },
+                {
+                    "vmName": "SFAPPCTX004",
+                    "vmSize": "Standard_NV12",
+                    "vmOsDiskSku": "2012-R2-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-bustier-subnet",
+                    "dataDisks": [
+                        {
+                            "diskSku": "StandardSSD_LRS",
+                            "diskSizeGB": 50
+                        }
+                    ]
+                },
+                {
+                    "vmName": "SFAPPCTX005",
+                    "vmSize": "Standard_F4s_v2",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-bustier-subnet"
+                },
+                {
+                    "vmName": "SFAPPDBA001",
+                    "vmSize": "Standard_E4s_v3",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-datatier-subnet",
+                    "dataDisks": [
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 300
+                        },
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 300
+                        },
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 300
+                        }
+                    ]
+                },
+                {
+                    "vmName": "SFAPPDBA004",
+                    "vmSize": "Standard_E4s_v3",
+                    "vmOsDiskSku": "2012-R2-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-datatier-subnet",
+                    "dataDisks": [
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 400
+                        },
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 50
+                        }
+                    ]
+                },
+                {
+                    "vmName": "SFAPPDCX001",
+                    "vmSize": "Standard_B2ms",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-datatier-subnet",
+                    "vmAvSetName": "ASFAPPDCX-ASET",
+                    "dataDisks": [
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 50
+                        },
+                        {
+                            "diskSku": "Standard_LRS",
+                            "diskSizeGB": 100
+                        }
+                    ]
+                },
+                {
+                    "vmName": "SFAPPDCX002",
+                    "vmSize": "Standard_B2ms",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-datatier-subnet",
+                    "vmAvSetName": "ASFAPPDCX-ASET",
+                    "dataDisks": [
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 50
+                        },
+                        {
+                            "diskSku": "Standard_LRS",
+                            "diskSizeGB": 100
+                        }
+                    ]
+                },
+                {
+                    "vmName": "SFAPPDDC001",
+                    "vmSize": "Standard_F4s_v2",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-bustier-subnet",
+                    "vmAvSetName": "ASFAPPDDC-ASET"
+                },
+                {
+                    "vmName": "SFAPPDDC002",
+                    "vmSize": "Standard_F4s_v2",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-bustier-subnet",
+                    "vmAvSetName": "ASFAPPDDC-ASET"
+                },
+                {
+                    "vmName": "SFAPPFIL001",
+                    "vmSize": "Standard_F4s_v2",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-bustier-subnet",
+                    "dataDisks": [
+                        {
+                            "diskSku": "Standard_LRS",
+                            "diskSizeGB": 2048
+                        },
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 1024
+                        }
+                    ]
+                },
+                {
+                    "vmName": "SFAPPLIC001",
+                    "vmSize": "Standard_F2s_v2",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-datatier-subnet",
+                    "vmAvSetName": "ASFAPPLIC-ASET",
+                    "dataDisks": [
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 50
+                        }
+                    ]
+                },
+                {
+                    "vmName": "SFAPPLIC002",
+                    "vmSize": "Standard_F2s_v2",
+                    "vmOsDiskSku": "2012-R2-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-webtier-subnet",
+                    "dataDisks": [
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 50
+                        },
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 100
+                        }
+                    ]
+                },
+                {
+                    "vmName": "SFAPPMGT001",
+                    "vmSize": "Standard_D2s_v3",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-supptier-subnet",
+                    "dataDisks": [
+                        {
+                            "diskSku": "StandardSSD_LRS",
+                            "diskSizeGB": 4095
+                        },
+                        {
+                            "diskSku": "Standard_LRS",
+                            "diskSizeGB": 100
+                        }
+                    ]
+                },
+                {
+                    "vmName": "SFAPPWEB001",
+                    "vmSize": "Standard_F8s_v2",
+                    "vmOsDiskSku": "2016-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-webtier-subnet",
+                    "dataDisks": [
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 50
+                        },
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 50
+                        }
+                    ]
+                },
+                {
+                    "vmName": "SFAPPWEB002",
+                    "vmSize": "Standard_D4s_v3",
+                    "vmOsDiskSku": "2012-R2-Datacenter",
+                    "vmVnetName": "fluor-sea-prod-vnet",
+                    "vmSubnetName": "fluor-sea-prod-webtier-subnet",
+                    "dataDisks": [
+                        {
+                            "diskSku": "Premium_LRS",
+                            "diskSizeGB": 170
+                        }
+                    ]
+                }
+            ]
+        },
+        "vmAdminName": {
+            "value": "fluoradmin"
+        },
+        "vmAdminPassword": {
+            "value": "LongPassw0rd!"
         }
     }
 }

@@ -2,6 +2,12 @@
     "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "assetLocationURI": {
+            "type": "string",
+            "metadata": {
+                "description": "URI that points to the linked ARM templates."
+            }
+        },
         "networkResourceGroupName": {
             "type": "string",
             "metadata": {
@@ -62,11 +68,20 @@
                 "description": "Key-value pairs of Resource group tags."
             }
         },
-        "assetLocationURI": {
+        "diagnosticsStorageAccountName": {
             "type": "string",
             "metadata": {
-                "description": "URI that points to the linked ARM templates."
+                "description": "description"
             }
+        },
+        "VMs": {
+            "type": "array"
+        },
+        "vmAdminName": {
+            "type": "string"
+        },
+        "vmAdminPassword": {
+            "type": "securestring"
         }
     },
     "functions": [],
@@ -81,7 +96,9 @@
             //"networkResourceGroup": "[concat(variables('deploymentName'), '-Network-ResourceGroup')]",
             "vnet": "[concat(variables('deploymentName'), '-Network-VNet')]",
             "routeTablesAll": "[concat(variables('deploymentName'), '-Network-RouteTables-')]",
-            "routeTableGwSubnet": "[concat(variables('deploymentName'), '-Network-RouteTables-GwSubnet')]"
+            "routeTableGwSubnet": "[concat(variables('deploymentName'), '-Network-RouteTables-GwSubnet')]",
+            "diagStorageAccount": "[concat(variables('deploymentName'), '-Storage-Diagnostics')]",
+            "vm": "[concat(variables('deploymentName'), '-VM-')]"
         }
     },
     "resources": [
@@ -120,7 +137,7 @@
         {
             "comments": "Route Table for Gateway Subnet",
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2021-04-01",
+            "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').routeTableGwSubnet]",
             "resourceGroup": "[parameters('networkResourceGroupName')]",
             "dependsOn": [
@@ -133,7 +150,8 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "routeTable_name": {"value": "fluor-sea-prod-gw-subnet-rt"}
+                    "routeTable_name": {"value": "fluor-sea-prod-gw-subnet-rt"},
+                    "location": {"value": "[variables('constants').location]"}
                 }
             }
         },
@@ -166,13 +184,64 @@
             }
         },
         {
-            "comments": "ASA NVA Resource Group",
+            "comments": "Resource Group for VMs",
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2020-10-01",
             "name": "[parameters('vmResourceGroupName')]",
             "location": "[variables('constants').resourceGroupLocation]",
             "tags": "[parameters('vmResourceGroupTags')]"
-        }
+        },
+        {
+            "comments": "Storage account for boot diagnostics",
+            "name": "[variables('deploymentNames').diagStorageAccount]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('vmResourceGroupName')]",
+            "apiVersion": "2020-10-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('constants').templateLocationURI, 'Storage.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storageAccountName": {"value": "[parameters('diagnosticsStorageAccountName')]"},
+                    "storageAccountType": {"value": "Standard_LRS"},
+                    "location": {"value": "[variables('constants').location]"}
+                }
+            }
+        },
+     {
+         "name": "[Concat(variables('deploymentNames').vm, copyIndex(1))]",
+         "type": "Microsoft.Resources/deployments",
+         "apiVersion": "2020-10-01",
+         "resourceGroup": "[parameters('vmResourceGroupName')]",
+         "properties": {
+             "mode": "Incremental",
+             "templateLink": {
+                 "uri": "[concat(variables('constants').templateLocationURI, 'VM.json')]",
+                 "contentVersion": "1.0.0.0"
+             },
+             "parameters": {
+                 "vmName": {"value": "[parameters('VMs')[copyIndex()].vmName]"},
+                 "vmSize": {"value": "[parameters('VMs')[copyIndex()].vmSize]"},
+                 "vmOsDiskSku": {"value": "[parameters('VMs')[copyIndex()].vmOsDiskSku]"},
+                 "vmVnetName": {"value": "[parameters('VMs')[copyIndex()].vmVnetName]"},
+                 "vmSubnetName": {"value": "[parameters('VMs')[copyIndex()].vmSubnetName]"},
+                 "vmAvSetName": {"value": "[parameters('VMs')[copyIndex()].vmAvSetName]"},
+                 "dataDisks": {"value": "[parameters('VMs')[copyIndex()].dataDisks]"},
+                 "bootDiagStorageAccount": {"value": "[parameters('diagnosticsStorageAccountName')]"},
+                 "location": {"value": "[variables('constants').location]"},
+                 "vmAdminName": {"value": "[parameters('vmAdminName')]"},
+                 "vmAdminPassword": {"value": "[parameters('vmAdminPassword')]"},
+                 "vnetResourceGroup": {"value": "[parameters('networkResourceGroupName')]"}
+             }
+         },
+         "copy": {
+             "name": "vmLoop",
+             "count": "[length(parameters('VMs'))]",
+             "mode": "Parallel"
+         }
+     }
     ],
     "outputs": {}
 }
