@@ -4,17 +4,18 @@
     "parameters": {
         "routeTable_name": {
             "type": "String"
+        },
+        "location": {
+            "type": "string"
         }
     },
-    "variables": {
-        "location": "[resourceGroup().location]"
-    },
+    "variables": {},
     "resources": [
         {
             "name": "[parameters('routeTable_name')]",
             "type": "Microsoft.Network/routeTables",
             "apiVersion": "2019-11-01",
-            "location": "[variables('location')]",
+            "location": "[parameters('location')]",
             "tags": "[resourceGroup().tags]",
             "properties": {
                 "routes": [],
