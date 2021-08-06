@@ -52,7 +52,7 @@
     "resources": [
         {
             "condition": "[not(equals(parameters('vmAvSetName'), ''))]",
-            "name": "[parameters('vmAvSetName')]",
+            "name": "[If(equals(parameters('vmAvSetName'), ''), 'BLANK', parameters('vmAvSetName'))]",
             "type": "Microsoft.Compute/availabilitySets",
             "apiVersion": "2019-07-01",
             "location": "[parameters('location')]",
