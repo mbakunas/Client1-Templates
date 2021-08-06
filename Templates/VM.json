@@ -41,28 +41,9 @@
             "type": "string"
         }
     },
-    "variables": {
-        "constants": {
-            "availabilitySetPlatformFaultDomainCount": 2,
-            "availabilitySetPlatformUpdateDomainCount": 5
-        }
-    },
+    "variables": {},
     "functions": [],
     "resources": [
-        {
-            "condition": "[not(equals(parameters('vmAvSetName'), ''))]",
-            "name": "[If(equals(parameters('vmAvSetName'), ''), 'BLANK', parameters('vmAvSetName'))]",
-            "type": "Microsoft.Compute/availabilitySets",
-            "apiVersion": "2019-07-01",
-            "location": "[parameters('location')]",
-            "properties": {
-                "platformFaultDomainCount": "[variables('constants').availabilitySetPlatformFaultDomainCount]",
-                "platformUpdateDomainCount": "[variables('constants').availabilitySetPlatformUpdateDomainCount]"
-            },
-            "sku": {
-                "name": "Aligned"
-            }
-        },
         {
             "name": "[concat(parameters('vmName'), '-NIC1')]",
             "type": "Microsoft.Network/networkInterfaces",
@@ -110,7 +91,6 @@
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[concat(parameters('vmName'), '-NIC1')]",
-                "[parameters('vmAvSetName')]",
                 "dataDisksLoop"
             ],
             "tags": "[resourceGroup().tags]",
