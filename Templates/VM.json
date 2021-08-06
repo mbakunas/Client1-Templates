@@ -46,7 +46,6 @@
             "availabilitySetPlatformFaultDomainCount": 2,
             "availabilitySetPlatformUpdateDomainCount": 5
         }
-        //"avSetNameJson": "[json(concat('{\"id\": \"', resourceId('Microsoft.Compute/availabilitySets', parameters('vmAvSetName')), '\"}'))]"
     },
     "functions": [],
     "resources": [
@@ -170,8 +169,7 @@
                     "enabled": true,
                     "storageUri": "[concat('https://', parameters('bootDiagStorageAccount'), '.blob.core.windows.net/')]"
                 }
-            },
-            "availabilitySet": "[if(equals(parameters('vmAvSetName'), ''), json('null'), json(concat('{\"id\": \"', resourceId('Microsoft.Compute/availabilitySets', parameters('vmAvSetName')), '\"}')))]"
+            }
     }
     }
     ],
