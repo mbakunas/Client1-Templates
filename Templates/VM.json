@@ -79,7 +79,7 @@
                 }
             },
             "sku": {
-                "name": "[parameters('dataDisks')[copyIndex()].diskSku]"
+                "name": "[coalesce(parameters('dataDisks')[copyIndex()].diskSku, ' StandardSSD_LRS')]"
             },
             "copy": {
                 "name": "dataDisksLoop",
