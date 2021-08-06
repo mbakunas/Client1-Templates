@@ -20,6 +20,7 @@
         "vmAvSetName": {
             "type": "string",
             "defaultValue": ""
+            // even though this parameter isn't used, it needs to stay due to calling template conditional logic
         },
         "dataDisks": {
             "type": "array",
