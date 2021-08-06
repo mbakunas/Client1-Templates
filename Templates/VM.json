@@ -89,6 +89,7 @@
         "type": "Microsoft.Compute/disks",
         "apiVersion": "2020-09-30",
         "location": "[parameters('location')]",
+        "tags": "[resourceGroup().tags]",
         "properties": {
             "diskSizeGB": "[parameters('dataDisks')[copyIndex()].diskSizeGB]",
             "creationData": {
@@ -107,7 +108,7 @@
         "name": "[parameters('vmName')]",
         "type": "Microsoft.Compute/virtualMachines",
         "apiVersion": "2019-07-01",
-        "location": "[resourceGroup().location]",
+        "location": "[parameters('location')]",
         "dependsOn": [
             "[concat(parameters('vmName'), '-NIC1')]",
             "[parameters('vmAvSetName')]",
