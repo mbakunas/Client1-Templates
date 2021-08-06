@@ -63,115 +63,115 @@
                 "name": "Aligned"
             }
         },
-    {
-        "name": "[concat(parameters('vmName'), '-NIC1')]",
-        "type": "Microsoft.Network/networkInterfaces",
-        "apiVersion": "2019-11-01",
-        "location": "[parameters('location')]",
-        "tags": "[resourceGroup().tags]",
-        "properties": {
-            "ipConfigurations": [
-                {
-                    "name": "ipConfig1",
-                    "properties": {
-                        "privateIPAllocationMethod": "Dynamic",
-                        "subnet": {
-                            "id": "[resourceId(parameters('vnetResourceGroup'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vmVnetName'), parameters('vmSubnetName'))]"
+        {
+            "name": "[concat(parameters('vmName'), '-NIC1')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2019-11-01",
+            "location": "[parameters('location')]",
+            "tags": "[resourceGroup().tags]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipConfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[resourceId(parameters('vnetResourceGroup'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vmVnetName'), parameters('vmSubnetName'))]"
+                            }
                         }
                     }
-                }
-            ]
-        }
-    },
-    {
-        "name": "[concat(parameters('vmName'), '-DataDisk', copyIndex(1))]",
-        "type": "Microsoft.Compute/disks",
-        "apiVersion": "2020-09-30",
-        "location": "[parameters('location')]",
-        "tags": "[resourceGroup().tags]",
-        "properties": {
-            "diskSizeGB": "[parameters('dataDisks')[copyIndex()].diskSizeGB]",
-            "creationData": {
-                "createOption": "Empty"
+                ]
             }
         },
-        "sku": {
-            "name": "[parameters('dataDisks')[copyIndex()].diskSku]"
+        {
+            "name": "[concat(parameters('vmName'), '-DataDisk', copyIndex(1))]",
+            "type": "Microsoft.Compute/disks",
+            "apiVersion": "2020-09-30",
+            "location": "[parameters('location')]",
+            "tags": "[resourceGroup().tags]",
+            "properties": {
+                "diskSizeGB": "[parameters('dataDisks')[copyIndex()].diskSizeGB]",
+                "creationData": {
+                    "createOption": "Empty"
+                }
+            },
+            "sku": {
+                "name": "[parameters('dataDisks')[copyIndex()].diskSku]"
+            },
+            "copy": {
+                "name": "dataDisksLoop",
+                "count": "[length(parameters('dataDisks'))]"
+            }
         },
-        "copy": {
-            "name": "dataDisksLoop",
-            "count": "[length(parameters('dataDisks'))]"
-        }
-    },
-    {
-        "name": "[parameters('vmName')]",
-        "type": "Microsoft.Compute/virtualMachines",
-        "apiVersion": "2019-07-01",
-        "location": "[parameters('location')]",
-        "dependsOn": [
-            "[concat(parameters('vmName'), '-NIC1')]",
-            "[parameters('vmAvSetName')]",
-            "dataDisksLoop"
-        ],
-        "tags": "[resourceGroup().tags]",
-        "properties": {
-            "hardwareProfile": {
-                "vmSize": "[parameters('vmSize')]"
-            },
-            "osProfile": {
-                "computerName": "[parameters('vmName')]",
-                "adminUsername": "[parameters('vmAdminName')]",
-                "adminPassword": "[parameters('vmAdminPassword')]"
-            },
-            "storageProfile": {
-                "imageReference": {
-                    "publisher": "MicrosoftWindowsServer",
-                    "offer": "WindowsServer",
-                    "sku": "[parameters('vmOsDiskSku')]",
-                    "version": "latest"
+        {
+            "name": "[parameters('vmName')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2019-07-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat(parameters('vmName'), '-NIC1')]",
+                "[parameters('vmAvSetName')]",
+                "dataDisksLoop"
+            ],
+            "tags": "[resourceGroup().tags]",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('vmSize')]"
                 },
-                "osDisk": {
-                    "name": "[concat(parameters('vmName'), '-OsDisk')]",
-                    "caching": "ReadWrite",
-                    "createOption": "FromImage",
-                    "managedDisk": {
-                        "storageAccountType": "Premium_LRS"
-                    }
+                "osProfile": {
+                    "computerName": "[parameters('vmName')]",
+                    "adminUsername": "[parameters('vmAdminName')]",
+                    "adminPassword": "[parameters('vmAdminPassword')]"
                 },
-                "copy": [
-                    {
-                        "name": "dataDisks",
-                        "count": "[length(parameters('dataDisks'))]",
-                        "input": {
-                            "lun": "[copyIndex('dataDisks')]",
-                            "createOption": "attach",
-                            "caching": "None",
-                            "diskSizeGB": "[parameters('dataDisks')[copyIndex('dataDisks')].diskSizeGB]",
-                            "managedDisk": {
-                                "storageAccountType": "[parameters('dataDisks')[copyIndex('dataDisks')].diskSku]",
-                                "id": "[resourceId('Microsoft.Compute/disks', concat(parameters('vmName'), '-DataDisk', copyIndex('dataDisks', 1)))]"
-                            },
-                            "writeAcceleratorEnabled": false
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "[parameters('vmOsDiskSku')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "[concat(parameters('vmName'), '-OsDisk')]",
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS"
                         }
+                    },
+                    "copy": [
+                        {
+                            "name": "dataDisks",
+                            "count": "[length(parameters('dataDisks'))]",
+                            "input": {
+                                "lun": "[copyIndex('dataDisks')]",
+                                "createOption": "attach",
+                                "caching": "None",
+                                "diskSizeGB": "[parameters('dataDisks')[copyIndex('dataDisks')].diskSizeGB]",
+                                "managedDisk": {
+                                    "storageAccountType": "[parameters('dataDisks')[copyIndex('dataDisks')].diskSku]",
+                                    "id": "[resourceId('Microsoft.Compute/disks', concat(parameters('vmName'), '-DataDisk', copyIndex('dataDisks', 1)))]"
+                                },
+                                "writeAcceleratorEnabled": false
+                            }
 
+                        }
+                    ]
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('vmName'), '-NIC1'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[concat('https://', parameters('bootDiagStorageAccount'), '.blob.core.windows.net/')]"
                     }
-                ]
-            },
-            "networkProfile": {
-                "networkInterfaces": [
-                    {
-                        "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('vmName'), '-NIC1'))]"
-                    }
-                ]
-            },
-            "diagnosticsProfile": {
-                "bootDiagnostics": {
-                    "enabled": true,
-                    "storageUri": "[concat('https://', parameters('bootDiagStorageAccount'), '.blob.core.windows.net/')]"
                 }
             }
-    }
-    }
+        }
     ],
     "outputs": {}
 }
