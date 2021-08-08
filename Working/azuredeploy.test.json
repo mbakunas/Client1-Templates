@@ -1,0 +1,177 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "assetLocationURI": {
+            "type": "string",
+            "metadata": {
+                "description": "URI that points to the linked ARM templates."
+            }
+        },
+        "networkResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the resource group containing the network resources."
+            }
+        },
+        "networkResourceGroupTags": {
+            "type": "object",
+            "metadata": {
+                "description": "Key-value pairs of Resource group tags."
+            }
+        },
+        "vnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the virutal network."
+            }
+        },
+        "vnetAddressSpace": {
+            "type": "string",
+            "metadata": {
+                "description": "Address space of the virtual network."
+            }
+        },
+        "gatewaySubnetAddressSpace": {
+            "type": "string",
+            "metadata": {
+                "description": "Address space of the virtual network's gateway subnet"
+            }
+        },
+        "subnetNames": {
+            "type": "array",
+            "metadata": {
+                "description": "List of subnet names.  One subnet will be created for each name."
+            }
+        },
+        "subnetAddressSpaces": {
+            "type": "array",
+            "metadata": {
+                "description": "List of subnet address spaces.  The number of address spaces much match the count of subnet names."
+            }
+        },
+        "subnetNsgNames": {
+            "type": "array",
+            "metadata": {
+                "description": "List of subnet NSG names.  Use NONE for no NSG.  The number of NSG names must match the count of subnet names."
+            }
+        },
+        "vmResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the resource group containing the network resources."
+            }
+        },
+        "vmResourceGroupTags": {
+            "type": "object",
+            "metadata": {
+                "description": "Key-value pairs of Resource group tags."
+            }
+        },
+        "diagnosticsStorageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "VMs": {
+            "type": "array"
+        },
+        "vmAdminName": {
+            "type": "string"
+        },
+        "vmAdminPassword": {
+            "type": "securestring"
+        }
+    },
+    "functions": [],
+    "variables": {
+        "constants": {
+            "location": "[deployment().location]",
+            "resourceGroupLocation": "[deployment().location]",
+            "templateLocationURI": "[concat(parameters('assetLocationURI'), 'Templates/')]"
+        },
+        "deploymentName": "[deployment().Name]",
+        "deploymentNames": {
+            //"networkResourceGroup": "[concat(variables('deploymentName'), '-Network-ResourceGroup')]",
+            "vnet": "[concat(variables('deploymentName'), '-Network-VNet')]",
+            "routeTablesAll": "[concat(variables('deploymentName'), '-Network-RouteTables-')]",
+            "routeTableGwSubnet": "[concat(variables('deploymentName'), '-Network-RouteTables-GwSubnet')]",
+            "diagStorageAccount": "[concat(variables('deploymentName'), '-Storage-Diagnostics')]",
+            "vm": "[concat(variables('deploymentName'), '-VM-')]"
+        },
+        "VmTemplate": "[concat(variables('constants').templateLocationURI, 'VM.json')]",
+        "VmAvSetTemplate": "[concat(variables('constants').templateLocationURI, 'VM-AvSet.json')]",
+
+        
+        // build the JSON objects for the VM linked template parameters
+        // the reason this step is necessary is due to some VMs being in availability sets (and some not)
+        // and some VMs having data disks (and some don't).  we need to omit those parameters to trigger
+        // the defaults in the linked template for the cases where there is no AvSet or data disk
+        "copy": [
+            {
+                "name": "vmNameParamJson",
+                "count": "[length(parameters('VMs'))]",
+                "input": "[concat('\"vmName\": {\"value\": \"', parameters('VMs')[copyIndex('vmNameParamJson')].vmName, '\"},')]"
+            },
+            {
+                "name": "vmSizeParamJson",
+                "count": "[length(parameters('VMs'))]",
+                "input": "[concat('\"vmSize\": {\"value\": \"', parameters('VMs')[copyIndex('vmSizeParamJson')].vmSize, '\"},')]"
+            },
+            {
+                "name": "vmOsDiskSkuParamJson",
+                "count": "[length(parameters('VMs'))]",
+                "input": "[concat('\"vmOsDiskSku\": {\"value\": \"', parameters('VMs')[copyIndex('vmOsDiskSkuParamJson')].vmOsDiskSku, '\"},')]"
+            },
+            {
+                "name": "vmVnetNameParamJson",
+                "count": "[length(parameters('VMs'))]",
+                "input": "[concat('\"vmVnetName\": {\"value\": \"', parameters('VMs')[copyIndex('vmVnetNameParamJson')].vmVnetName, '\"},')]"
+            },
+            {
+                "name": "vmSubnetNameParamJson",
+                "count": "[length(parameters('VMs'))]",
+                "input": "[concat('\"vmSubnetName\": {\"value\": \"', parameters('VMs')[copyIndex('vmSubnetNameParamJson')].vmSubnetName, '\"},')]"
+            },
+            {
+                "name": "vmAvSetNameParamJson",
+                "count": "[length(parameters('VMs'))]",
+                "input": "[if(contains(parameters('VMs')[copyIndex('vmAvSetNameParamJson')], 'vmAvSetName'), concat('\"vmAvSetName\": {\"value\": \"', parameters('VMs')[copyIndex('vmAvSetNameParamJson')].vmAvSetName, '\"},'), json('null'))]"
+            },
+            {
+                "name": "dataDisksParamJson",
+                "count": "[length(parameters('VMs'))]",
+                "input": "[if(contains(parameters('VMs')[copyIndex('dataDisksParamJson')], 'dataDisks'), concat('\"dataDisks\": {\"value\": ', string(parameters('VMs')[copyIndex('dataDisksParamJson')].dataDisks), '},'), json('null'))]"
+            }
+        ],
+        "bootDiagStorageAccountParamJson": "[concat('\"bootDiagStorageAccount\": {\"value\": \"', parameters('diagnosticsStorageAccountName'), '\"},')]",
+        "locationParamJson": "[concat('\"location\": {\"value\": \"', variables('constants').location, '\"},')]",
+        "vmAdminNameJson": "[concat('\"vmAdminName\": {\"value\": \"', parameters('vmAdminName'), '\"},')]",
+        "vmAdminPasswordJson": "[concat('\"vmAdminPassword\": {\"value\": \"', parameters('vmAdminPassword'), '\"},')]",
+        "vnetResourceGroupJson": "[concat('\"vnetResourceGroup\": {\"value\": \"', parameters('networkResourceGroupName'), '\"}')]"
+    },
+    "resources": [],
+    "outputs": {
+        "output1": {
+            "type": "array",
+            "condition": false,
+            "copy": {
+                "count": "[length(parameters('VMs'))]",
+                "input": "[concat('{', variables('vmNameParamJson')[copyIndex()], variables('vmSizeParamJson')[copyIndex()], variables('vmOsDiskSkuParamJson')[copyIndex()], variables('vmVnetNameParamJson')[copyIndex()], variables('vmSubnetNameParamJson')[copyIndex()], variables('vmAvSetNameParamJson')[copyIndex()], variables('dataDisksParamJson')[copyIndex()], variables('bootDiagStorageAccountParamJson'), variables('locationParamJson'), variables('vmAdminNameJson'), variables('vmAdminPasswordJson'), variables('vnetResourceGroupJson'), '}')]"
+            }
+        },
+        "output2": {
+            "type": "object",
+            "value": "[json(concat('{', variables('vmNameParamJson')[1], variables('vmSizeParamJson')[1], variables('vmOsDiskSkuParamJson')[1], variables('vmVnetNameParamJson')[1], variables('vmSubnetNameParamJson')[1], variables('vmAvSetNameParamJson')[1], variables('dataDisksParamJson')[1], variables('bootDiagStorageAccountParamJson'), variables('locationParamJson'), variables('vmAdminNameJson'), variables('vmAdminPasswordJson'), variables('vnetResourceGroupJson'), '}'))]"
+        },
+        "vnetResourceGroupJson": {
+            "type": "string",
+            "value": "[json(concat('\"vnetResourceGroup\": {\"value\": \"', parameters('networkResourceGroupName'), '\"},'))]"
+        },
+        "networkResourceGroupName": {
+            "type": "string",
+            "value": "[concat('\"vnetResourceGroup\": {\"value\": \"', parameters('networkResourceGroupName'), '\"},')]"
+        }
+    }
+}

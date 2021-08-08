@@ -17,9 +17,6 @@
         "vmSubnetName": {
             "value": "fluor-sea-prod-datatier-subnet"
         },
-        "vmAvSetName": {
-            "value": "ASFACPDBA-ASET01"
-        },
         "dataDisks": {
             "value": [
                 {

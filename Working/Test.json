@@ -1,0 +1,68 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "VMs": {
+            "type": "array"
+        }
+    },
+    "functions": [],
+    "variables": {
+        // build the JSON object for the VM linked template parameters
+        // the reason this step is necessary is due to some VMs being in availability sets (and some not)
+        // and some VMs having data disks (and some don't).  we need to omit those parameters to trigger
+        // the defaults in the linked template for the cases where there is no AvSet or data disk
+        "copy": [
+            {
+                "name": "vmNameParamJson",
+                "count": "[length(parameters('VMs'))]",
+                "input": "[concat('\"vmName\": {\"value\": \"', parameters('VMs')[copyIndex('vmNameParamJson')].vmName, '\"},')]"
+            },
+            {
+                "name": "vmSizeParamJson",
+                "count": "[length(parameters('VMs'))]",
+                "input": "[concat('\"vmSize\": {\"value\": \"', parameters('VMs')[copyIndex('vmSizeParamJson')].vmSize, '\"},')]"
+            },
+            {
+                "name": "vmOsDiskSkuParamJson",
+                "count": "[length(parameters('VMs'))]",
+                "input": "[concat('\"vmOsDiskSku\": {\"value\": \"', parameters('VMs')[copyIndex('vmOsDiskSkuParamJson')].vmOsDiskSku, '\"},')]"
+            },
+            {
+                "name": "vmVnetNameParamJson",
+                "count": "[length(parameters('VMs'))]",
+                "input": "[concat('\"vmVnetName\": {\"value\": \"', parameters('VMs')[copyIndex('vmVnetNameParamJson')].vmVnetName, '\"},')]"
+            },
+            {
+                "name": "vmSubnetNameParamJson",
+                "count": "[length(parameters('VMs'))]",
+                "input": "[concat('\"vmSubnetName\": {\"value\": \"', parameters('VMs')[copyIndex('vmSubnetNameParamJson')].vmSubnetName, '\"},')]"
+            },
+            {
+                "name": "vmAvSetNameParamJson",
+                "count": "[length(parameters('VMs'))]",
+                "input": "[if(contains(parameters('VMs')[copyIndex('vmAvSetNameParamJson')], 'vmAvSetName'), concat('\"vmAvSetName\": {\"value\": \"', parameters('VMs')[copyIndex('vmAvSetNameParamJson')].vmAvSetName, '\"},'), '')]"
+            },
+            {
+                "name": "dataDisksParamJson",
+                "count": "[length(parameters('VMs'))]",
+                "input": "[if(contains(parameters('VMs')[copyIndex('dataDisksParamJson')], 'dataDisks'), concat('\"dataDisks\": {\"value\": ', string(parameters('VMs')[copyIndex('dataDisksParamJson')].dataDisks), '}'), '')]"
+            }
+        ]
+    },
+    "resources": [],
+    "outputs": {
+        "output1": {
+            "type": "array",
+            "condition": true,
+            "copy": {
+                "count": "[length(parameters('VMs'))]",
+                "input": "[concat(variables('vmNameParamJson')[copyIndex()], variables('vmSizeParamJson')[copyIndex()], variables('vmOsDiskSkuParamJson')[copyIndex()], variables('vmVnetNameParamJson')[copyIndex()], variables('vmSubnetNameParamJson')[copyIndex()], variables('vmAvSetNameParamJson')[copyIndex()], variables('dataDisksParamJson')[copyIndex()])]"
+            }
+        },
+        "output2": {
+            "type": "string",
+            "value": "[concat('{', variables('vmNameParamJson')[2], variables('vmSizeParamJson')[2], variables('vmOsDiskSkuParamJson')[2], variables('vmVnetNameParamJson')[2], variables('vmSubnetNameParamJson')[2], variables('vmAvSetNameParamJson')[2], variables('dataDisksParamJson')[2], '}')]"
+        }
+    }
+}
