@@ -88,7 +88,7 @@
     "variables": {
         "constants": {
             "location": "[deployment().location]",
-            "resourceGroupLocation": "eastus2",
+            "resourceGroupLocation": "[deployment().location]",
             "templateLocationURI": "[concat(parameters('assetLocationURI'), 'Templates/')]"
         },
         "deploymentName": "[deployment().Name]",
@@ -99,7 +99,57 @@
             "routeTableGwSubnet": "[concat(variables('deploymentName'), '-Network-RouteTables-GwSubnet')]",
             "diagStorageAccount": "[concat(variables('deploymentName'), '-Storage-Diagnostics')]",
             "vm": "[concat(variables('deploymentName'), '-VM-')]"
-        }
+        },
+        "VmTemplate": "[concat(variables('constants').templateLocationURI, 'VM.json')]",
+        "VmAvSetTemplate": "[concat(variables('constants').templateLocationURI, 'VM-AvSet.json')]",
+
+        
+        // build the JSON objects for the VM linked template parameters
+        // the reason this step is necessary is due to some VMs being in availability sets (and some not)
+        // and some VMs having data disks (and some don't).  we need to omit those parameters to trigger
+        // the defaults in the linked template for the cases where there is no AvSet or data disk
+        "copy": [
+            {
+                "name": "vmNameParamJson",
+                "count": "[length(parameters('VMs'))]",
+                "input": "[concat('\"vmName\": {\"value\": \"', parameters('VMs')[copyIndex('vmNameParamJson')].vmName, '\"},')]"
+            },
+            {
+                "name": "vmSizeParamJson",
+                "count": "[length(parameters('VMs'))]",
+                "input": "[concat('\"vmSize\": {\"value\": \"', parameters('VMs')[copyIndex('vmSizeParamJson')].vmSize, '\"},')]"
+            },
+            {
+                "name": "vmOsDiskSkuParamJson",
+                "count": "[length(parameters('VMs'))]",
+                "input": "[concat('\"vmOsDiskSku\": {\"value\": \"', parameters('VMs')[copyIndex('vmOsDiskSkuParamJson')].vmOsDiskSku, '\"},')]"
+            },
+            {
+                "name": "vmVnetNameParamJson",
+                "count": "[length(parameters('VMs'))]",
+                "input": "[concat('\"vmVnetName\": {\"value\": \"', parameters('VMs')[copyIndex('vmVnetNameParamJson')].vmVnetName, '\"},')]"
+            },
+            {
+                "name": "vmSubnetNameParamJson",
+                "count": "[length(parameters('VMs'))]",
+                "input": "[concat('\"vmSubnetName\": {\"value\": \"', parameters('VMs')[copyIndex('vmSubnetNameParamJson')].vmSubnetName, '\"},')]"
+            },
+            {
+                "name": "vmAvSetNameParamJson",
+                "count": "[length(parameters('VMs'))]",
+                "input": "[if(contains(parameters('VMs')[copyIndex('vmAvSetNameParamJson')], 'vmAvSetName'), concat('\"vmAvSetName\": {\"value\": \"', parameters('VMs')[copyIndex('vmAvSetNameParamJson')].vmAvSetName, '\"},'), '')]"
+            },
+            {
+                "name": "dataDisksParamJson",
+                "count": "[length(parameters('VMs'))]",
+                "input": "[if(contains(parameters('VMs')[copyIndex('dataDisksParamJson')], 'dataDisks'), concat('\"dataDisks\": {\"value\": ', string(parameters('VMs')[copyIndex('dataDisksParamJson')].dataDisks), '},'), '')]"
+            }
+        ],
+        "bootDiagStorageAccountParamJson": "[concat('\"bootDiagStorageAccount\": {\"value\": \"', parameters('diagnosticsStorageAccountName'), '\"},')]",
+        "locationParamJson": "[concat('\"location\": {\"value\": \"', variables('constants').location, '\"},')]",
+        "vmAdminNameJson": "[concat('\"vmAdminName\": {\"value\": \"', parameters('vmAdminName'), '\"},')]",
+        "vmAdminPasswordJson": "[concat('\"vmAdminPassword\": {\"value\": \"', parameters('vmAdminPassword'), '\"},')]",
+        "vnetResourceGroupJson": "[concat('\"vnetResourceGroup\": {\"value\": \"', parameters('networkResourceGroupName'), '\"}')]"
     },
     "resources": [
         {
@@ -126,7 +176,8 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "routeTable_name": {"value": "[concat(parameters('subnetNames')[copyIndex()], '-rt')]"}
+                    "routeTable_name": {"value": "[concat(parameters('subnetNames')[copyIndex()], '-rt')]"},
+                    "location": {"value": "[variables('constants').location]"}
                 }
             },
             "copy": {
@@ -196,6 +247,9 @@
             "name": "[variables('deploymentNames').diagStorageAccount]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('vmResourceGroupName')]",
+            "dependsOn": [
+                "[parameters('vmResourceGroupName')]"
+            ],
             "apiVersion": "2020-10-01",
             "properties": {
                 "mode": "Incremental",
@@ -215,26 +269,17 @@
          "type": "Microsoft.Resources/deployments",
          "apiVersion": "2020-10-01",
          "resourceGroup": "[parameters('vmResourceGroupName')]",
+         "dependsOn": [
+             "[variables('deploymentNames').diagStorageAccount]",
+             "[variables('deploymentNames').vnet]"
+         ],
          "properties": {
              "mode": "Incremental",
              "templateLink": {
-                 "uri": "[concat(variables('constants').templateLocationURI, 'VM.json')]",
+                 "uri": "[if(contains(parameters('VMs')[copyIndex()], 'vmAvSetName'), variables('VmAvSetTemplate'), variables('VmTemplate'))]",
                  "contentVersion": "1.0.0.0"
              },
-             "parameters": {
-                 "vmName": {"value": "[parameters('VMs')[copyIndex()].vmName]"},
-                 "vmSize": {"value": "[parameters('VMs')[copyIndex()].vmSize]"},
-                 "vmOsDiskSku": {"value": "[parameters('VMs')[copyIndex()].vmOsDiskSku]"},
-                 "vmVnetName": {"value": "[parameters('VMs')[copyIndex()].vmVnetName]"},
-                 "vmSubnetName": {"value": "[parameters('VMs')[copyIndex()].vmSubnetName]"},
-                 "vmAvSetName": {"value": "[parameters('VMs')[copyIndex()].vmAvSetName]"},
-                 "dataDisks": {"value": "[parameters('VMs')[copyIndex()].dataDisks]"},
-                 "bootDiagStorageAccount": {"value": "[parameters('diagnosticsStorageAccountName')]"},
-                 "location": {"value": "[variables('constants').location]"},
-                 "vmAdminName": {"value": "[parameters('vmAdminName')]"},
-                 "vmAdminPassword": {"value": "[parameters('vmAdminPassword')]"},
-                 "vnetResourceGroup": {"value": "[parameters('networkResourceGroupName')]"}
-             }
+             "parameters": "[json(concat('{', variables('vmNameParamJson')[copyIndex()], variables('vmSizeParamJson')[copyIndex()], variables('vmOsDiskSkuParamJson')[copyIndex()], variables('vmVnetNameParamJson')[copyIndex()], variables('vmSubnetNameParamJson')[copyIndex()], variables('vmAvSetNameParamJson')[copyIndex()], variables('dataDisksParamJson')[copyIndex()], variables('bootDiagStorageAccountParamJson'), variables('locationParamJson'), variables('vmAdminNameJson'), variables('vmAdminPasswordJson'), variables('vnetResourceGroupJson'), '}'))]"
          },
          "copy": {
              "name": "vmLoop",

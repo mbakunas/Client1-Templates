@@ -86,7 +86,7 @@
             }
         },
         "diagnosticsStorageAccountName": {
-            "value": "fluorseaprodrg01diag683"
+            "value": "fluorseaprodrg01diag683x"
         },
         "VMs": {
             "value": [
